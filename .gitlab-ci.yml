@@ -16,8 +16,8 @@ install:
   script:
     - cd Frontend
     - npm install
-#    - npm install cypress --save-dev
-    - npm run build
+    - npm install cypress --save-dev
+    - 0npm run build
   artifacts:
     paths:
       - Frontend/node_modules/
@@ -29,9 +29,9 @@ test:unit:
     - cd Frontend
     - npm run test:unit
 
-#test:e2e:
-#  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
-#  stage: test:e2e
-#  script:
-#    - cd Frontend
-#    - npm run test:e2e
+test:e2e:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test:e2e
+  script:
+    - cd Frontend
+    - npm run test:e2e

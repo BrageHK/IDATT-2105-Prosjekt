@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend;
+package edu.ntnu.idatt2105.backend.database;
 
 import jakarta.persistence.*;
 
@@ -14,7 +14,7 @@ public class User {
     private String email;
     private Long phoneNumber;
     private String address;
-    
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
