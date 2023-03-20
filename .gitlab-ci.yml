@@ -32,4 +32,4 @@ test:e2e:
   script:
     - cd Frontend
     - npm install cypress --save-dev
-    - npm test:e2e:dev
+    - npm run test:e2e:dev
