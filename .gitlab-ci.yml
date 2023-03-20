@@ -1,0 +1,35 @@
+image: node:latest
+
+stages:
+  - install
+  - test:e2e
+  - test:unit
+
+cache:
+  paths:
+    - Frontend/node_modules
+
+install:
+  stage: install
+  script:
+    - cd Frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - node_modules/
+      - dist/
+
+test:unit:
+  stage: test:unit
+  script:
+    - cd Frontend
+    - npm run test:unit
+
+test:e2e:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test:e2e
+  script:
+    - cd Frontend
+    - npm install cypress --save-dev
+    - npm test:e2e:dev
