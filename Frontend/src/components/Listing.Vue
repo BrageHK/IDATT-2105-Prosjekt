@@ -16,7 +16,10 @@
   export default {
     name: 'ShoppingListing',
     props: {
-      id: String
+      id: {
+        type: Number,
+        required: true
+      }
     },
     data() {
         return {
