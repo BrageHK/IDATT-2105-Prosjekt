@@ -17,7 +17,7 @@ public class User {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    @Column(unique = true, nullable = false, name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
     @Column(name = "phone_number", nullable = false)
     private Long phoneNumber;
@@ -56,5 +56,21 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(Long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
