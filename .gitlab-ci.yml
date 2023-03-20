@@ -20,6 +20,7 @@ install:
     paths:
       - Frontend/node_modules/
       - Frontend/dist/
+      - Frontend/.cache/Cypress
 
 test:unit:
   stage: test:unit
