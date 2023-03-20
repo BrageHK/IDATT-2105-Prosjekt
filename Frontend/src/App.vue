@@ -1,12 +1,7 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import LoginComponent from './components/Login.vue';
-</script>
-
 <template>
   <header>
     <div class="wrapper">
-      <img src="./assets/images/logo.svg" alt="My Logo" class="logo">
+      <img src="@/assets/images/logo.svg" alt="My Logo" class="logo">
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/login">Login</RouterLink>
@@ -20,6 +15,16 @@ import LoginComponent from './components/Login.vue';
     </div>
   </v-footer>
 </template>
+
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import LoginComponent from './components/Login.vue';
+import logoPath from '@/assets/images/logo.svg'
+
+const logo = logoPath
+</script>
+
+
 
 <style scoped>
 header {

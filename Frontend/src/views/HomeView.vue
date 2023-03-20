@@ -5,7 +5,7 @@ import ShoppingListing from '../components/Listing.vue';
 <template>
   <main>
     <div class="grid">
-      <ShoppingListing v-for="id in 20" :id=id.toString />
+      <ShoppingListing v-for="id in 20" :id="id" />
     </div>
   </main>
 </template>
