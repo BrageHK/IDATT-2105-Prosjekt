@@ -2,8 +2,8 @@ image: node:latest
 
 stages:
   - install
-  - test:e2e
   - test:unit
+  - test:e2e
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}"
