@@ -40,7 +40,6 @@ nav {
   justify-content: center;
 }
 
-
 nav a {
   display: inline-block;
   padding: 0.5rem 1rem;
@@ -59,8 +58,6 @@ nav a.router-link-exact-active {
   background-color: #0718c4;
   color: #fff;
 }
-
-
 
 v-footer {
     background-color: #0718c4;
