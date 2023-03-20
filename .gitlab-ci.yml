@@ -9,7 +9,7 @@ cache:
   key: "${CI_COMMIT_REF_SLUG}"
   paths:
     - Frontend/node_modules
-    - Frontend/.cache/Cypress
+    - .cache/Cypress
 
 install:
   stage: install
