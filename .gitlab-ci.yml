@@ -1,0 +1,37 @@
+image: node:latest
+
+stages:
+  - install
+  - test:unit
+#  - test:e2e
+
+cache:
+  key: "${CI_COMMIT_REF_SLUG}"
+  paths:
+    - Frontend/node_modules
+#    - .cache/Cypress
+
+install:
+  stage: install
+  script:
+    - cd Frontend
+    - npm install
+#    - npm install cypress --save-dev
+    - npm run build
+  artifacts:
+    paths:
+      - Frontend/node_modules/
+      - Frontend/dist/
+
+test:unit:
+  stage: test:unit
+  script:
+    - cd Frontend
+    - npm run test:unit
+
+#test:e2e:
+#  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+#  stage: test:e2e
+#  script:
+#    - cd Frontend
+#    - npm run test:e2e
