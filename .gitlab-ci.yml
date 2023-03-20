@@ -6,8 +6,10 @@ stages:
   - test:unit
 
 cache:
+  key: "${CI_COMMIT_REF_SLUG}"
   paths:
     - Frontend/node_modules
+    - Frontend/.cache/Cypress
 
 install:
   stage: install
@@ -20,7 +22,6 @@ install:
     paths:
       - Frontend/node_modules/
       - Frontend/dist/
-      - Frontend/.cache/Cypress
 
 test:unit:
   stage: test:unit
