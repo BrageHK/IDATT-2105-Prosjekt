@@ -1,13 +1,10 @@
-package edu.ntnu.idatt2105.backend.database;
+package edu.ntnu.idatt2105.backend.DTO;
 
 import jakarta.persistence.*;
 
 @Entity(name = "users")
 @Table(name = "users")
-public class User {
-
-    public User() {
-    }
+public class UserDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +20,10 @@ public class User {
     private Long phoneNumber;
     @Column(name = "address", nullable = false)
     private String address;
+
+    public UserDTO() {
+
+    }
 
 
     public void setFirstName(String firstName) {

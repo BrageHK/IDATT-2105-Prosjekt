@@ -1,23 +1,24 @@
-package edu.ntnu.idatt2105.backend.database;
+package edu.ntnu.idatt2105.backend.DTO;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
-public class Product {
+public class ProductDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Product() {
+    public ProductDTO() {
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
@@ -34,6 +35,26 @@ public class Product {
     private Boolean status;
     @Column(name = "imageURL", nullable = false)
     private String imageURL;
+    private double price;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductImageDTO> images;
+
+    public List<ProductImageDTO> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImageDTO> images) {
+        this.images = images;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 
     public String getName() {
         return name;
