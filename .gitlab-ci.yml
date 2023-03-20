@@ -17,7 +17,7 @@ install:
     - cd Frontend
     - npm install
     - npm install cypress --save-dev
-    - 0npm run build
+    - npm run build
   artifacts:
     paths:
       - Frontend/node_modules/
