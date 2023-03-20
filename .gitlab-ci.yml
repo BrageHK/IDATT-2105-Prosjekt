@@ -14,11 +14,12 @@ install:
   script:
     - cd Frontend
     - npm install
+    - npm install cypress --save-dev
     - npm run build
   artifacts:
     paths:
-      - node_modules/
-      - dist/
+      - Frontend/node_modules/
+      - Frontend/dist/
 
 test:unit:
   stage: test:unit
@@ -31,5 +32,4 @@ test:e2e:
   stage: test:e2e
   script:
     - cd Frontend
-    - npm install cypress --save-dev
     - npm run test:e2e
