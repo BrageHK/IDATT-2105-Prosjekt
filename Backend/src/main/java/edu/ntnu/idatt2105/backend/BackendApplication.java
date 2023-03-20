@@ -14,12 +14,12 @@ public class BackendApplication {
         SpringApplication.run(BackendApplication.class, args);
     }
 
-    @Bean
+    /*@Bean
     CommandLineRunner commandLineRunner(UserRepository userRepository) {
         return args -> {
             UserDTO u = new UserDTO();
             u.setId(1L);
             userRepository.save(u);
         };
-    }
+    }*/
 }

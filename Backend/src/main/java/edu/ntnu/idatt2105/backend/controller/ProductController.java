@@ -14,8 +14,7 @@ public class ProductController {
 
     Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @Autowired
-    private ProductController productController;
+
 
 
 }
