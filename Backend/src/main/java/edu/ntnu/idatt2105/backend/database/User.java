@@ -111,7 +111,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 
     @Override
@@ -121,7 +121,6 @@ public class User implements UserDetails {
     }
 
     public void setAccountNonExpired(boolean accountNonExpired) {
-        // You can leave this method empty if you don't need to do anything with the value.
     }
 
     @Override

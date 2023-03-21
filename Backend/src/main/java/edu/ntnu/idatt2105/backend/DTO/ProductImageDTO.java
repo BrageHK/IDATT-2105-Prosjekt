@@ -14,7 +14,7 @@ public class ProductImageDTO {
         @Column(name = "image_url", nullable = false)
         private String imageUrl;
 
-        @Column(name = "image_description", nullable = false)
+        @Column(name = "image_description", nullable = true)
         private String imageDescription;
 
         @ManyToOne(fetch = FetchType.LAZY)

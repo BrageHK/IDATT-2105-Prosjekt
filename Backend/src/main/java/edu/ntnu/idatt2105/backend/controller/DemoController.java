@@ -16,10 +16,21 @@ public class DemoController {
 */
 
 @RestController
+@RequestMapping("/demo-controller")
 public class DemoController {
 
     @RequestMapping("/hello")
     public String sayHello() {
         return "Hello world!";
+    }
+
+    @RequestMapping("/hello/{name}")
+    public ResponseEntity<String> sayHello(@PathVariable String name) {
+        return ResponseEntity.ok("Hello " + name + "!");
+    }
+
+    @GetMapping
+    public ResponseEntity<String> sayHello2() {
+        return ResponseEntity.ok("Hello mister!");
     }
 }

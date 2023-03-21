@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.security;
 import jakarta.servlet.ServletException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+
     private final UserDetailsService userDetailsService;
     private final JWTService jwtService;
 
@@ -28,9 +31,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if (!(authHeader != null && authHeader.startsWith("Bearer "))) {
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            throw new ServletException("Missing or invalid Authorization header.");
+            logger.info("Missing or invalid Authorization header.");
+            return;
+            //throw new ServletException("Missing or invalid Authorization header.");
         }
 
         jwt = authHeader.substring(7);
