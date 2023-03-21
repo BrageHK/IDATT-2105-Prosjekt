@@ -8,12 +8,7 @@
         <span>{{ price + ' NOK' }}</span>
         <div class="listing-actions">
           <button @click="$emit('add-to-cart', { name, price })">Add to Cart</button>
-          <img
-            v-bind:src="favoriteIcon"
-            @click.stop="toggleFavorite"
-            alt="Add to favorites"
-            class="favorite-icon"
-          />
+          <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon"/>
         </div>
         <p>{{ description }}</p>
       </div>
@@ -81,7 +76,7 @@
   width: 100%;
   display: flex;
   justify-content: center; 
-
+}
 .listing-image img {
   max-width: 100%;
 }
