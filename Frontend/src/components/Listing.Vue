@@ -14,7 +14,7 @@
   import router from '../router'
 
   export default {
-    name: 'ShoppingListing',
+    name: 'Listing',
     props: {
       id: {
         type: Number,
