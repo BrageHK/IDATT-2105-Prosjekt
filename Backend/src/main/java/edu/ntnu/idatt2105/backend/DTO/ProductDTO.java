@@ -3,7 +3,7 @@ package edu.ntnu.idatt2105.backend.DTO;
 import jakarta.persistence.*;
 
 import java.util.List;
-
+/*
 @Entity
 @Table(name = "products")
 public class ProductDTO {
@@ -103,4 +103,8 @@ public class ProductDTO {
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
+}*/
+
+public class ProductDTO {
+
 }

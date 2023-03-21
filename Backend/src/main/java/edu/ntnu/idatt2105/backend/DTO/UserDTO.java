@@ -1,5 +1,5 @@
 package edu.ntnu.idatt2105.backend.DTO;
-
+/*
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import jakarta.persistence.*;
@@ -24,24 +24,21 @@ import java.util.List;
 public class UserDTO implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "user_generator")
+    @GeneratedValue//(strategy = GenerationType.AUTO, generator = "user_generator")
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
     private String firstName;
-    @Column(name = "last_name", nullable = false)
     private String lastName;
-    @Column(name = "email", nullable = false, unique = true)
     private String email;
-    @Column(name = "phone_number", nullable = false)
     private Long phoneNumber;
-    @Column(name = "address", nullable = false)
     private String address;
-    @Column(name = "password", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
     public void setPassword(String password) {
         this.password = password;
@@ -145,4 +142,9 @@ public class UserDTO implements UserDetails {
     public String getRoleName() {
         return role.toString();
     }
+}
+*/
+
+public class UserDTO {
+
 }

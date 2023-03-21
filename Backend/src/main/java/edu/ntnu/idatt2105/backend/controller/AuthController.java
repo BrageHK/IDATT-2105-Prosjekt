@@ -3,16 +3,14 @@ package edu.ntnu.idatt2105.backend.controller;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationRequest;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationResponse;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
-import edu.ntnu.idatt2105.backend.security.RegisterRequest;
+import edu.ntnu.idatt2105.backend.security.authentication.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@CrossOrigin
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -29,6 +27,6 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.authen(request));
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

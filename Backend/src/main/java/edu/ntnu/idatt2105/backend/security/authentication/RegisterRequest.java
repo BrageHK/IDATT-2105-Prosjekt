@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.security;
+package edu.ntnu.idatt2105.backend.security.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,4 +15,6 @@ public class RegisterRequest {
     private String lastName;
     private String email;
     private String password;
+    private String address;
+    private Long phoneNumber;
 }

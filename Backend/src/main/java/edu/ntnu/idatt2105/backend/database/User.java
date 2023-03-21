@@ -1,13 +1,25 @@
 package edu.ntnu.idatt2105.backend.database;
 
+import edu.ntnu.idatt2105.backend.enums.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "users")
 @Table(name = "users")
-public class User {
-
-    public User() {
-    }
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +35,31 @@ public class User {
     private Long phoneNumber;
     @Column(name = "address", nullable = false)
     private String address;
+    //@Column(name = "password", nullable = false)
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.toString()));
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -37,7 +73,6 @@ public class User {
         this.email = email;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
@@ -72,5 +107,38 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    @Transient
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        // You can leave this method empty if you don't need to do anything with the value.
+    }
+
+    @Override
+    @Transient
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @Transient
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @Transient
+    public boolean isEnabled() {
+        return true;
     }
 }

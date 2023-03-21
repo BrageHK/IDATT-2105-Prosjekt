@@ -1,10 +1,11 @@
 package edu.ntnu.idatt2105.backend.DTO;
 
-import edu.ntnu.idatt2105.backend.DTO.ProductDTO;
+import edu.ntnu.idatt2105.backend.database.Product;
 import jakarta.persistence.*;
 
-@Entity(name = "product_images")
+//@Entity(name = "product_images")
 public class ProductImageDTO {
+/*
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +19,7 @@ public class ProductImageDTO {
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "product_id")
-        private ProductDTO product;
+        private Product product;
 
         public ProductImageDTO() {
         }
@@ -58,5 +59,5 @@ public class ProductImageDTO {
         public void setProduct(ProductDTO product) {
             this.product = product;
         }
-
+*/
 }
