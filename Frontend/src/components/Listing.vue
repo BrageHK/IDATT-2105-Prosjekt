@@ -3,7 +3,8 @@
         <img v-bind:src="image" alt="">
         <h2>{{ name }}</h2>
         <span>{{ price + " NOK" }}</span>   
-        <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon">    </div>
+        <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon">
+    </div>
 </template>
 
   <script lang="ts">
@@ -32,7 +33,7 @@
         }
     },
     methods: {
-        handleClick() {router.push('/listing/' + this.id) // navigate to the other view
+        handleClick() {router.push('/listing/' + this.id) 
         console.log('clicked')
         },
         toggleFavorite() {
@@ -77,14 +78,14 @@
   h2 {
     height: 70px;
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* Number of lines to show */
+    -webkit-line-clamp: 3; 
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
   .shopping-listing:hover {
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 10px #0718c4;
 }
   
   .shopping-listing img {
