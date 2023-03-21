@@ -1,11 +1,13 @@
 package edu.ntnu.idatt2105.backend.DTO;
 
+import edu.ntnu.idatt2105.backend.Repository.UserRepository;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
