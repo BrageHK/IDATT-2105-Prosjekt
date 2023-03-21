@@ -1,14 +1,15 @@
 <template>
   <header>
     <div class="wrapper">
-      <img src="@/assets/images/logo.svg" alt="My Logo" class="logo">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
+        <router-link to="/"><img src="@/assets/images/logo.svg" alt="My Logo" class="logo"></router-link>
+        <RouterLink class="test" to="/login">Login</RouterLink>
       </nav>
     </div>
   </header>
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
   <v-footer>
     <div class="wrapper">
       <p>Copyright © {{ new Date().getFullYear() }} Handel uten Hemninger</p>
@@ -27,22 +28,32 @@ const logo = logoPath
 
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+
+
+main {
+  padding-top: 100px;
+  min-height: calc(100vh - 215px);
 }
 
 .logo {
   display: block;
   margin: 0 2rem 0 0;
-  height: 150px; 
+  height: 75px; 
   width: auto; 
 }
 
 nav {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;;
+  position: fixed;
+  height: 100px;
+  background-color: #fff;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  border-bottom: 1px solid #0718c4;
 }
 
 nav a {
@@ -58,11 +69,17 @@ nav a {
   transition: all 0.2s ease;
 }
 
-nav a:hover,
-nav a.router-link-exact-active {
+nav a.test:hover,
+nav a.test.router-link-exact-active {
   background-color: #0718c4;
   color: #fff;
 }
+
+.logo:hover{
+  border: 4px solid #0718c4;
+  border-radius: 1rem;
+}
+
 
 v-footer {
     background-color: #0718c4;
@@ -71,6 +88,8 @@ v-footer {
     display: flex;
     align-items: center;
     margin-top: auto;
+    bottom: 0; 
+    
   }
 
   v-footer .wrapper {
@@ -84,6 +103,7 @@ v-footer {
   v-footer p {
     margin: 0;
     font-size: 1.2rem;
+    
   }
 
 @media (min-width: 1024px) {
