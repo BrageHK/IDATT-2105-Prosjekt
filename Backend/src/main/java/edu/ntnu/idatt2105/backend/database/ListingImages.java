@@ -3,10 +3,12 @@ package edu.ntnu.idatt2105.backend.database;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -19,8 +21,6 @@ public class ListingImages {
 
     @Column(name = "image_url", nullable = false)
     private String imageURL;
-    @Column(name = "image_description")
-    private String imageDescription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id", nullable = false)

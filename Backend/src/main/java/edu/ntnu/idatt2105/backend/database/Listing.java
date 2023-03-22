@@ -29,8 +29,6 @@ public class Listing {
         return id;
     }
 
-    @Column(name = "title", nullable = false)
-    private String title;
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
     @Column(name = "brief_description", nullable = false, columnDefinition = "TEXT")
@@ -43,8 +41,8 @@ public class Listing {
     private double latitude;
     @Column(name = "longitude", nullable = false)
     private double longitude;
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Column(name = "is_sold", nullable = false)
+    private Boolean isSold;
     @Column(name = "imageURL", nullable = false)
     private String imageURL;
     @Column(name = "price", nullable = false)

@@ -5,6 +5,7 @@ import edu.ntnu.idatt2105.backend.database.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -36,6 +39,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        logger.info("Authenticating user with email: " + request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

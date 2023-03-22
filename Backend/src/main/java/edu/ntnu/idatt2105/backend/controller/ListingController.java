@@ -1,22 +1,26 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
-import edu.ntnu.idatt2105.backend.database.request.CreateListingRequest;
+import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ListingController {
 
-    @Autowired
-    private ListingRepository listingRepository;
+
+    private final ListingRepository listingRepository;
+
+    private final JWTService jwtService;
 
     private final ListingService ListingService;
 
@@ -30,9 +34,16 @@ public class ListingController {
 
     // create listing
     @PostMapping("/listing/create")
-    public ResponseEntity<?> createListing(@RequestBody CreateListingRequest listingRequest) {
+    public ResponseEntity<?> createListing(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("listing") String listingJson,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        String jwt = authHeader.substring(7);
+        String loggedInUserName = jwtService.extractUsername(jwt);
+
         String returnMessage;
-        if(ListingService.addListing(listingRequest)) {
+        if(ListingService.addListing(listingJson, files, loggedInUserName)) {
             returnMessage = "Listing created";
         } else {
             returnMessage = "Listing not created";
