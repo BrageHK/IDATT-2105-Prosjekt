@@ -22,6 +22,7 @@ public class AuthenticationService {
     Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
 
     public AuthenticationResponse register(RegisterRequest request) {
+        logger.info("Registering user with email: " + request.getEmail());
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())

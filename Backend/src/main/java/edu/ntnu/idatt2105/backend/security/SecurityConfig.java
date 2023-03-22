@@ -17,17 +17,15 @@ public class SecurityConfig {
 
     private final JWTAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-
+//.requestMatchers("/api/listing/**").permitAll()
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/demo-controller/**").permitAll()
-
-                .requestMatchers("/api/listing/**").permitAll()
-                .requestMatchers("/api/user/**").authenticated()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/user/**").authenticated()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -36,6 +34,7 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

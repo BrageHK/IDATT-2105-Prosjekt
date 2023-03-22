@@ -5,28 +5,32 @@ import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationResponse
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.authentication.RegisterRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthController.class);
+
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
-    @PostMapping("/auth/authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
+        logger.info("hello");
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

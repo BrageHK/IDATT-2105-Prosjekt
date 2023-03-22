@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListingController {
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
 
     private final ListingRepository listingRepository;
 
@@ -39,7 +41,9 @@ public class ListingController {
             @RequestParam("listing") String listingJson,
             @RequestHeader("Authorization") String authHeader
     ) {
+
         String jwt = authHeader.substring(7);
+        logger.info("hello from create listing: " + jwt);
         String loggedInUserName = jwtService.extractUsername(jwt);
 
         String returnMessage;
