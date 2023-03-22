@@ -29,15 +29,4 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
-
-    // This is just for testing purposes
-    @RequestMapping("/user/hello")
-    public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("Hello world!");
-    }
-
-    /*@PostMapping("/user/{id}")
-    public ResponseEntity<String> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(authenticationService.getUser(id));
-    }*/
 }

@@ -2,16 +2,22 @@ package edu.ntnu.idatt2105.backend.database;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "listings")
 public class Listing {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -19,20 +25,19 @@ public class Listing {
         this.id = id;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "title", nullable = false)
+    private String title;
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
     @Column(name = "brief_description", nullable = false, columnDefinition = "TEXT")
     private String briefDescription;
     @Column(name = "category", nullable = false)
     private String category;
-    @Column(name = "location")
+    @Column(name = "address")
     private String address;
     @Column(name = "latitude", nullable = false)
     private double latitude;
@@ -42,4 +47,13 @@ public class Listing {
     private Boolean status;
     @Column(name = "imageURL", nullable = false)
     private String imageURL;
+    @Column(name = "price", nullable = false)
+    private double price;
+
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListingImages> images = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 }

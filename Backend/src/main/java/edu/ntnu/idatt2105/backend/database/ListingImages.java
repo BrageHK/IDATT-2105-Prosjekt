@@ -17,6 +17,12 @@ public class ListingImages {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageURL;
+    @Column(name = "image_description")
+    private String imageDescription;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "listing_id", nullable = false)
+    private Listing listing;
 }

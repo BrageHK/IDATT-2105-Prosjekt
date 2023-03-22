@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/demo-controller/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/listing/**").permitAll()
                 .requestMatchers("/api/v1/user/**").authenticated()
                 .anyRequest()
                 .authenticated()
