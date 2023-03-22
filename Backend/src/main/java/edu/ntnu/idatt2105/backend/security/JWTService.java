@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.security;
 
+import edu.ntnu.idatt2105.backend.database.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,19 +20,21 @@ public class JWTService {
 
     private static final String KEY_SECRET = "5368566D597133743677397A24432646294A404E635266556A576E5A72347537";
 
-    // expire in 5 minutes
+    // expire in 60 minutes
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(0), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", ((User) userDetails).getId());
+        return generateToken(claims, userDetails);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

@@ -21,6 +21,7 @@ import java.util.List;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -28,7 +29,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
@@ -66,6 +66,9 @@ public class User implements UserDetails {
     @Transient
     public boolean isAccountNonExpired() {
         return true;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
     }
 
     @Override

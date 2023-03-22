@@ -5,10 +5,6 @@ import org.slf4j.LoggerFactory;
 
 
 public class ListingController {
-
     Logger logger = LoggerFactory.getLogger(ListingController.class);
-
-
-
 
 }
