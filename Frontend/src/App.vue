@@ -1,14 +1,10 @@
 <template>
   <header>
-    <div class="wrapper">
-      <img src="@/assets/images/logo.svg" alt="My Logo" class="logo">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-      </nav>
-    </div>
+    <Navbar />
   </header>
-  <RouterView />
+  <main>
+    <RouterView />
+  </main>
   <v-footer>
     <div class="wrapper">
       <p>Copyright © {{ new Date().getFullYear() }} Handel uten Hemninger</p>
@@ -17,52 +13,24 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import LoginComponent from './components/Login.vue';
-import logoPath from '@/assets/images/logo.svg'
+import { RouterView } from 'vue-router'
+import Navbar from './components/Navbar.vue';
 
-const logo = logoPath
+
 </script>
 
 
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+
+
+main {
+  padding-top: 100px;
+  min-height: calc(100vh - 215px);
 }
 
-.logo {
-  display: block;
-  margin: 0 2rem 0 0;
-  height: 150px; 
-  width: auto; 
-}
 
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-nav a {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  margin: 0 1rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  text-decoration: none;
-  background-color: #fff;
-  transition: all 0.2s ease;
-}
-
-nav a:hover,
-nav a.router-link-exact-active {
-  background-color: #0718c4;
-  color: #fff;
-}
 
 v-footer {
     background-color: #0718c4;
@@ -71,6 +39,8 @@ v-footer {
     display: flex;
     align-items: center;
     margin-top: auto;
+    bottom: 0; 
+    
   }
 
   v-footer .wrapper {
@@ -84,6 +54,7 @@ v-footer {
   v-footer p {
     margin: 0;
     font-size: 1.2rem;
+    
   }
 
 @media (min-width: 1024px) {
