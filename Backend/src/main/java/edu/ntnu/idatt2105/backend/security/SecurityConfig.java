@@ -23,6 +23,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
+                .requestMatchers("/demo-controller/**").permitAll()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
                 .anyRequest()

@@ -31,11 +31,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             logger.info("Missing or invalid Authorization header.");
             return;
-            //throw new ServletException("Missing or invalid Authorization header.");
         }
 
         jwt = authHeader.substring(7);
