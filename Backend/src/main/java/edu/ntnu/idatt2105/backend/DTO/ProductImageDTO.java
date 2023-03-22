@@ -1,8 +1,5 @@
 package edu.ntnu.idatt2105.backend.DTO;
 
-import edu.ntnu.idatt2105.backend.database.Product;
-import jakarta.persistence.*;
-
 //@Entity(name = "product_images")
 public class ProductImageDTO {
 /*
