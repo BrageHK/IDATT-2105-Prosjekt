@@ -20,9 +20,30 @@ const router = createRouter({
     },
     {
       path: '/listing/:id',
-      component: ListingView
+      component: ListingView,
+      meta: { requiresAuth: true }
     }
   ]
-})
+}) 
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('authToken');
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    
+    if (isAuthenticated) {
+      next(); 
+    } else {
+      next({ path: '/login' }); 
+    }
+  } else if (to.path === '/login' && isAuthenticated) {
+    // Redirect to the home page if the user is authenticated and tries to access the login page
+    next({ path: '/' });
+  } else {
+    next(); 
+  }
+});
+
+
 
 export default router

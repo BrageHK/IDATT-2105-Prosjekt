@@ -1,21 +1,23 @@
 <template>
   <div class="login-container">
-    <h2>Login</h2>
+    <h2>Logg inn</h2>
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="email">Email:</label>
+        <label for="email">Epost:</label>
         <input type="email" id="email" v-model="email" required />
       </div>
       <div class="form-group">
-        <label for="password">Password:</label>
+        <label for="password">Passord:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <button type="submit">Log in</button>
+      <button type="submit">Logg inn</button>
     </form>
   </div>
 </template>
 
 <script lang="ts">
+import router from '@/router';
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -25,8 +27,22 @@ export default {
   },
   methods: {
     handleSubmit() {
-      // Handle form submission logic here
-      console.log('Email:', this.email, 'Password:', this.password);
+      axios 
+        .post('http://192.168.86.40:8080/api/v1/auth/authenticate', {
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          const token = response.data.token;
+          localStorage.setItem('authToken', token);
+          console.log(token)
+          console.log(response);
+          router.push('/');
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
 };
@@ -35,11 +51,6 @@ export default {
 <style scoped>
 .login-container {
   width: 300px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
 }
 
 .form-group {
