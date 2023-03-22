@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "listings")
 public class Listing {
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -20,6 +19,7 @@ public class Listing {
         this.id = id;
     }
 
+    @Id
     public Long getId() {
         return id;
     }
