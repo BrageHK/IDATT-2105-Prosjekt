@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.DTO.UserDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
@@ -28,6 +29,9 @@ public class UserService {
     @Autowired
     private ListingRepository listingRepository;
 
+    @Autowired
+    private ListingService listingService;
+
     public User getUserFromJTW(String authHeader) {
         String jwt = authHeader.substring(7);
         return userRepository.findByEmail(jwtService.extractUsername(jwt)).get();
@@ -53,13 +57,13 @@ public class UserService {
 
     public String getFavoritesToJson(User user) {
         List<Listing> favourites = user.getFavourites();
-        List<Long> favouritesIds = new ArrayList<>();
+        List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: favourites) {
-            favouritesIds.add(listing.getId());
+            listingDTOS.add(listingService.convertToListingDTO(listing));
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(favouritesIds);
+            return objectMapper.writeValueAsString(listingDTOS);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -96,5 +100,20 @@ public class UserService {
             return "Listing couldn't be removed from favourites: " + e.getMessage();
         }
 
+    }
+
+    public String getListingsToJson(User user) {
+        List<Listing> listings = user.getListings();
+        List<ListingDTO> listingDTOS = new ArrayList<>();
+        for (Listing listing: listings) {
+            listingDTOS.add(listingService.convertToListingDTO(listing));
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(listingDTOS);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

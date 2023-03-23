@@ -42,6 +42,16 @@ public class UserController {
         return ResponseEntity.ok(userService.getFavoritesToJson(user));
     }
 
+    @GetMapping("/getUser/listings")
+    public ResponseEntity<String> getUserListings(
+            @RequestHeader("Authorization") String authHeader
+    ) throws JsonProcessingException {
+        // Extract user ID from the JWT token
+        User user = userService.getUserFromJTW(authHeader);
+
+        return ResponseEntity.ok(userService.getListingsToJson(user));
+    }
+
     @PostMapping("/getUser/addFavorite")
     public ResponseEntity<String> addFavorite(
             @RequestHeader("Authorization") String authHeader,
