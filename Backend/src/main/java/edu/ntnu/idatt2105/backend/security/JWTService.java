@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.security;
 
-import edu.ntnu.idatt2105.backend.database.User;
+import edu.ntnu.idatt2105.backend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

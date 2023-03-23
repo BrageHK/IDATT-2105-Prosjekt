@@ -17,13 +17,15 @@ public class SecurityConfig {
 
     private final JWTAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-//.requestMatchers("/api/listing/**").permitAll()
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/demo-controller/**").permitAll()
+                .requestMatchers("/src/main/resources/images/**").permitAll()
+                .requestMatchers("/api/listing/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/user/**").authenticated()
                 .anyRequest()

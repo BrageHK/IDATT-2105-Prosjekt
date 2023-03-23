@@ -5,9 +5,8 @@ import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingImageRepository;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
-import edu.ntnu.idatt2105.backend.database.Listing;
-import edu.ntnu.idatt2105.backend.database.ListingImages;
-import edu.ntnu.idatt2105.backend.database.request.CreateListingRequest;
+import edu.ntnu.idatt2105.backend.model.Listing;
+import edu.ntnu.idatt2105.backend.model.ListingImages;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ public class ListingService {
     }
 
     public boolean addListing(String listingJson, List<MultipartFile> files, String email) {
+        logger.info("ListingService: addListing");
         try {
             FileStorageService fileStorageService = new FileStorageService();
 
@@ -39,24 +39,12 @@ public class ListingService {
             ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
             ArrayList<ListingImages> images = new ArrayList<>();
 
-            for (int i = 0; i < files.size(); i++) {
-                String fileName = fileStorageService.storeFile(files.get(i));
-                String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("src/main/resources/images/")
-                        .path(fileName)
-                        .toUriString();
-
-                // First image in the request is the thumbnail in the listing
-                if(i == 0) {
-                    listingDTO.setImageURL(fileDownloadUri);
-                } else {
-                    ListingImages listingImage = ListingImages.builder()
-                            .imageURL(fileDownloadUri)
-                            .listing(listingRepository.getReferenceById(listingDTO.getId()))
-                            .build();
-                    images.add(listingImageRepository.save(listingImage));
-                }
-            }
+            String fileName = fileStorageService.storeFile(files.get(0));
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("src/main/resources/images/")
+                    .path(fileName)
+                    .toUriString();
+            listingDTO.setImageURL(fileDownloadUri);
 
             Listing listing = Listing.builder()
                     .description(listingDTO.getDescription())
@@ -66,11 +54,27 @@ public class ListingService {
                     .latitude(listingDTO.getLatitude())
                     .longitude(listingDTO.getLongitude())
                     .price(listingDTO.getPrice())
+                    .imageURL(listingDTO.getImageURL())
                     .images(images)
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
                     .build();
             Listing savedListing = listingRepository.save(listing);
+
+            for (int i = 1; i < files.size(); i++) {
+                fileName = fileStorageService.storeFile(files.get(i));
+                fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("src/main/resources/images/")
+                        .path(fileName)
+                        .toUriString();
+
+                // First image in the request is the thumbnail in the listing
+                ListingImages listingImage = ListingImages.builder()
+                        .imageURL(fileDownloadUri)
+                        .listing(listingRepository.getReferenceById(savedListing.getId()))
+                        .build();
+                images.add(listingImageRepository.save(listingImage));
+            }
             return true;
         } catch (Exception e) {
             logger.error("Error adding listing to database: " + e);

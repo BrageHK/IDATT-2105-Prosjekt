@@ -5,6 +5,7 @@ import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,19 +15,25 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/api/listing")
 @RequiredArgsConstructor
 public class ListingController {
 
+    @RequestMapping("/hello")
+    public String sayHello() {
+        return "Hello world!";
+    }
+
     Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
 
+    @Autowired
     private final ListingRepository listingRepository;
-
+    @Autowired
     private final JWTService jwtService;
-
+    @Autowired
     private final ListingService ListingService;
 
-    @PostMapping("/listing/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<?> getListing(@PathVariable Long id) {
         // return info of listing as json
         return listingRepository.findById(id)
@@ -35,7 +42,7 @@ public class ListingController {
     }
 
     // create listing
-    @PostMapping("/listing/create")
+    @PostMapping("/create")
     public ResponseEntity<?> createListing(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("listing") String listingJson,

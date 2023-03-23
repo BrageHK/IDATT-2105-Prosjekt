@@ -1,7 +1,7 @@
 package edu.ntnu.idatt2105.backend.security.authentication;
 
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
-import edu.ntnu.idatt2105.backend.database.User;
+import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;

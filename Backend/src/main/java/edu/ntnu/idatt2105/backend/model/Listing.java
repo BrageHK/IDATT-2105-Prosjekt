@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.database;
+package edu.ntnu.idatt2105.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.List;
 public class Listing {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     public void setId(Long id) {
@@ -54,4 +54,21 @@ public class Listing {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    @Override
+    public String toString() {
+        return "Listing{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", briefDescription='" + briefDescription + '\'' +
+                ", category='" + category + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", isSold=" + isSold +
+                ", imageURL='" + imageURL + '\'' +
+                ", price=" + price +
+                ", owner=" + owner +
+                '}';
+    }
 }

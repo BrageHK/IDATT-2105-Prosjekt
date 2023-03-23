@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.DTO;
 
-import edu.ntnu.idatt2105.backend.database.ListingImages;
+import edu.ntnu.idatt2105.backend.model.ListingImages;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
