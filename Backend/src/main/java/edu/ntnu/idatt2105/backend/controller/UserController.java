@@ -1,21 +1,22 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
-import edu.ntnu.idatt2105.backend.database.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -41,4 +42,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to access this user.");
         }
     }
+
 }
