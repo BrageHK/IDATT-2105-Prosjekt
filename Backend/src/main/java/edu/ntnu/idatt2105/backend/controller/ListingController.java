@@ -34,7 +34,6 @@ public class ListingController {
             @RequestHeader("Authorization") String authHeader
     ) {
         String jwt = authHeader.substring(7);
-        logger.info("hello from create listing: " + jwt);
         String loggedInUserName = jwtService.extractUsername(jwt);
 
         String returnMessage;
@@ -46,13 +45,15 @@ public class ListingController {
         return ResponseEntity.ok(returnMessage);
     }
 
-    Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
-
     @GetMapping("/{id}")
     public ResponseEntity<String> getListing(@PathVariable Long id) {
         return ResponseEntity.ok(listingService.getListingAsJson(id));
     }
 
+    @GetMapping("/get20")
+    public ResponseEntity<String> get20Listings() {
+        return ResponseEntity.ok(listingService.get20ListingsAsJson());
+    }
 
 
     @PostMapping("/listing/{id}/delete")

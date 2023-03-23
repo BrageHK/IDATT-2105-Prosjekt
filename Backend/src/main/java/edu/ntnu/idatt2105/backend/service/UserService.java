@@ -9,7 +9,6 @@ import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,11 +67,12 @@ public class UserService {
     }
 
     public String addFavorite(User user, Long listingId) {
-        Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
-        logger.info("Adding to favorites!");
         try {
             List<Listing> favourites = user.getFavourites();
             Listing listing = listingRepository.findById(listingId).get();
+            if (favourites.contains(listing)) {
+                return "Listing already in favourites";
+            }
             favourites.add(listing);
             user.setFavourites(favourites);
             userRepository.save(user);
@@ -85,9 +85,6 @@ public class UserService {
     public String removeFavorite(User user, Long listingID) {
         try {
             Listing listing = listingRepository.findById(listingID).get();
-            if (listing == null) {
-                return "Listing not found";
-            }
             List<Listing> favourites = user.getFavourites();
             if (!favourites.remove(listing)) {
                 return "Listing not in favourites";

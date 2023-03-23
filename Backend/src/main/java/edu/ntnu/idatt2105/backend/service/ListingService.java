@@ -37,6 +37,31 @@ public class ListingService {
         return json;
     }
 
+    public String get20ListingsAsJson() {
+        logger.info("Starting to convert listings to json");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            List<Listing> listings = listingRepository.findAll();
+            List<ListingDTO> listingDTOS = new ArrayList<>();
+            logger.info("Loops starting");
+            if(listings.size() > 20) {
+                for (int i = 0; i < 20; i++) {
+                    listingDTOS.add(convertToListingDTO(listings.get(i)));
+                }
+            } else {
+                for (Listing listing : listings) {
+                    listingDTOS.add(convertToListingDTO(listing));
+                }
+            }
+            logger.info("ListingService: get20ListingsAsJson: " + listingDTOS.size() + " listings converted to json");
+            json = mapper.writeValueAsString(listingDTOS);
+        } catch (Exception e) {
+            logger.error("Error converting listing to json: " + e);
+        }
+        return json;
+    }
+
     public boolean addListing(String listingJson, List<MultipartFile> files, String email) {
         logger.info("ListingService: addListing");
         try {
