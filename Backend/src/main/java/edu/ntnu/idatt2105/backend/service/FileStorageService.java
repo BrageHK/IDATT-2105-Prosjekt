@@ -27,18 +27,37 @@ public class FileStorageService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    public String storeThumbnailImage(MultipartFile file, String fileName) {
+        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String fileExtension = StringUtils.getFilenameExtension(originalFileName);
+        if (!fileExtension.matches("(?i)(jpg|jpeg|png|gif|bmp)")) {
+            throw new RuntimeException("File type not supported: " + fileExtension);
+        }
         try {
-            if (fileName.contains("..")) {
-                throw new RuntimeException("Invalid file name: " + fileName);
-            }
-
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Path targetLocation = this.fileStorageLocation.resolve(fileName + "." + fileExtension);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
+            return targetLocation.getFileName().toString();
         } catch (IOException e) {
-            throw new RuntimeException("Could not store the file: " + fileName, e);
+            throw new RuntimeException("Could not store the file: " + originalFileName, e);
+        }
+    }
+
+    public String storeImage(MultipartFile file, String fileName, String folderName) {
+        String originalFileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String fileExtension = StringUtils.getFilenameExtension(originalFileName);
+        if (!fileExtension.matches("(?i)(jpg|jpeg|png|gif|bmp)")) {
+            throw new RuntimeException("File type not supported: " + fileExtension);
+        }
+        try {
+            Path folderPath = this.fileStorageLocation.resolve(String.valueOf(folderName));
+            if (!Files.exists(folderPath)) {
+                Files.createDirectory(folderPath);
+            }
+            Path targetLocation = folderPath.resolve(fileName + "." + fileExtension);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            return targetLocation.getFileName().toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not store the file: " + originalFileName, e);
         }
     }
 

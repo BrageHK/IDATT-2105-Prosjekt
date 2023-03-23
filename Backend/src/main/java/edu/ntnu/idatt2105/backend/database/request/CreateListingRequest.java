@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateListingRequest {
 
-    private String title;
     private String description;
     private String briefDescription;
     private String category;
@@ -19,7 +18,6 @@ public class CreateListingRequest {
     private double latitude;
     private double longitude;
     private Boolean status;
-    private String imageURL;
     private String owner;
     private double price;
 

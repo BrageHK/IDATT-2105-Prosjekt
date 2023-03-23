@@ -43,13 +43,12 @@ public class Listing {
     private double longitude;
     @Column(name = "is_sold", nullable = false)
     private Boolean isSold;
-    @Column(name = "imageURL", nullable = false)
-    private String imageURL;
     @Column(name = "price", nullable = false)
     private double price;
 
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ListingImages> images = new ArrayList<>();
+    // This is not needed
+    //@OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<ListingImages> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -66,7 +65,6 @@ public class Listing {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", isSold=" + isSold +
-                ", imageURL='" + imageURL + '\'' +
                 ", price=" + price +
                 ", owner=" + owner +
                 '}';
