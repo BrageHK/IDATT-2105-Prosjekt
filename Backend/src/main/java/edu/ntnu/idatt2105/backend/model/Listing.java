@@ -45,10 +45,12 @@ public class Listing {
     private Boolean isSold;
     @Column(name = "price", nullable = false)
     private double price;
+    @Column(name = "number_of_pictures", nullable = false)
+    private int numberOfPictures;
 
-    // This is not needed
-    //@OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<ListingImages> images = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "favourites", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<User> favourites = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)

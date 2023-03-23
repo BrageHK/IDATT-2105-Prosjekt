@@ -19,27 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListingController {
 
-    @RequestMapping("/hello")
-    public String sayHello() {
-        return "Hello world!";
-    }
-
-    Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
-
     @Autowired
     private final ListingRepository listingRepository;
     @Autowired
     private final JWTService jwtService;
     @Autowired
-    private final ListingService ListingService;
-
-    @PostMapping("/{id}")
-    public ResponseEntity<?> getListing(@PathVariable Long id) {
-        // return info of listing as json
-        return listingRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
-    }
+    private final ListingService listingService;
 
     // create listing
     @PostMapping("/create")
@@ -48,19 +33,27 @@ public class ListingController {
             @RequestParam("listing") String listingJson,
             @RequestHeader("Authorization") String authHeader
     ) {
-
         String jwt = authHeader.substring(7);
         logger.info("hello from create listing: " + jwt);
         String loggedInUserName = jwtService.extractUsername(jwt);
 
         String returnMessage;
-        if(ListingService.addListing(listingJson, files, loggedInUserName)) {
+        if(listingService.addListing(listingJson, files, loggedInUserName)) {
             returnMessage = "Listing created";
         } else {
             returnMessage = "Listing not created";
         }
         return ResponseEntity.ok(returnMessage);
     }
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<String> getListing(@PathVariable Long id) {
+        return ResponseEntity.ok(listingService.getListingAsJson(id));
+    }
+
+
 
     @PostMapping("/listing/{id}/delete")
     public ResponseEntity<?> deleteListing(@PathVariable Long id) {

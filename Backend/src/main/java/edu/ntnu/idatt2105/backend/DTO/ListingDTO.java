@@ -20,6 +20,7 @@ public class ListingDTO {
     private double longitude;
     private Boolean isSold;
     private double price;
+    private int numberOfPictures;
 
     private Long ownerId;
 }

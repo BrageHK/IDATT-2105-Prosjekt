@@ -26,6 +26,17 @@ public class ListingService {
         listingRepository.deleteById(id);
     }
 
+    public String getListingAsJson(long id) {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get()));
+        } catch (Exception e) {
+            logger.error("Error converting listing to json: " + e);
+        }
+        return json;
+    }
+
     public boolean addListing(String listingJson, List<MultipartFile> files, String email) {
         logger.info("ListingService: addListing");
         try {
@@ -44,13 +55,16 @@ public class ListingService {
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
+                    .numberOfPictures(files.size())
                     .build();
+
             Listing savedListing = listingRepository.save(listing);
 
-            fileStorageService.storeThumbnailImage(files.get(0), savedListing.getId().toString());
+            fileStorageService.handleFileUpload(files.get(0), savedListing.getId().toString(), "0");
 
             for (int i = 1; i < files.size(); i++) {
-                fileStorageService.storeImage(files.get(i), Integer.toString(i), listing.getId().toString());
+                fileStorageService.handleFileUpload(files.get(i), listing.getId().toString(), Integer.toString(i));
+                logger.info("ListingService: addListing: image added");
             }
 
             return true;
@@ -59,5 +73,21 @@ public class ListingService {
             return false;
         }
 
+    }
+
+    public ListingDTO convertToListingDTO(Listing listing) {
+        return ListingDTO.builder()
+                .id(listing.getId())
+                .description(listing.getDescription())
+                .briefDescription(listing.getBriefDescription())
+                .category(listing.getCategory())
+                .address(listing.getAddress())
+                .latitude(listing.getLatitude())
+                .longitude(listing.getLongitude())
+                .isSold(listing.getIsSold())
+                .price(listing.getPrice())
+                .numberOfPictures(listing.getNumberOfPictures())
+                .ownerId(listing.getOwner().getId())
+                .build();
     }
 }
