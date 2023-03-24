@@ -1,8 +1,11 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
+import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
+import edu.ntnu.idatt2105.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,8 @@ public class ListingController {
     private final JWTService jwtService;
     @Autowired
     private final ListingService listingService;
+    @Autowired
+    private final UserService userService;
 
     // create listing
     @PostMapping("/create")
@@ -33,12 +38,12 @@ public class ListingController {
             @RequestParam("listing") String listingJson,
             @RequestHeader("Authorization") String authHeader
     ) {
-        String jwt = authHeader.substring(7);
-        String loggedInUserName = jwtService.extractUsername(jwt);
+        String loggedInUserName = userService.getUserFromJTW(authHeader).getEmail();
 
         String returnMessage;
-        if(listingService.addListing(listingJson, files, loggedInUserName)) {
-            returnMessage = "Listing created";
+        Long num;
+        if((num = listingService.addListing(listingJson, files, loggedInUserName)) != null) {
+            returnMessage = num.toString();
         } else {
             returnMessage = "Listing not created";
         }
@@ -55,15 +60,13 @@ public class ListingController {
         return ResponseEntity.ok(listingService.get20ListingsAsJson());
     }
 
-
-    @PostMapping("/listing/{id}/delete")
-    public ResponseEntity<?> deleteListing(@PathVariable Long id) {
+    @GetMapping("/{id}/delete")
+    public ResponseEntity<?> deleteListing(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
         // delete listing
-        listingRepository.deleteById(id);
-        return ResponseEntity.ok("Listing deleted");
+        return ResponseEntity.ok(listingService.deleteListing(id, userService.getUserFromJTW(authHeader).getEmail()));
     }
 
-    @PostMapping("/listing/{id}/edit")
+    @PostMapping("/{id}/edit")
     public ResponseEntity<?> editListing(@PathVariable Long id) {
         // edit listing
         return ResponseEntity.ok("Listing edited");

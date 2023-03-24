@@ -10,8 +10,10 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +23,25 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
 
-    public void deleteListing(long id) {
-        listingRepository.deleteById(id);
+    public String deleteListing(long id, String email) {
+        AtomicReference<String> message = new AtomicReference<>("");
+        listingRepository.findById(id).ifPresent(listing -> {
+            if(listing.getOwner().getEmail().equals(email)) {
+                listingRepository.deleteById(id);
+                try {
+                    logger.info("Is Images with id " + id + " deleted: "
+                            + fileStorageService.deleteFolder(Long.toString(id)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                message.set("Listing deleted");
+            } else {
+                message.set("You are not the owner of this listing");
+            }
+        });
+        return message.get();
     }
 
     public String getListingAsJson(long id) {
@@ -62,8 +80,7 @@ public class ListingService {
         return json;
     }
 
-    public boolean addListing(String listingJson, List<MultipartFile> files, String email) {
-        logger.info("ListingService: addListing");
+    public Long addListing(String listingJson, List<MultipartFile> files, String email) {
         try {
             FileStorageService fileStorageService = new FileStorageService();
 
@@ -92,10 +109,10 @@ public class ListingService {
                 logger.info("ListingService: addListing: image added");
             }
 
-            return true;
+            return listing.getId();
         } catch (Exception e) {
             logger.error("Error adding listing to database: " + e);
-            return false;
+            return null;
         }
 
     }

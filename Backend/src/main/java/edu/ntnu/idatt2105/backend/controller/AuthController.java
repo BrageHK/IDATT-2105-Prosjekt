@@ -5,7 +5,6 @@ import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationResponse
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.authentication.RegisterRequest;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
-    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationService authenticationService;
 
@@ -30,7 +27,6 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        logger.info("hello");
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

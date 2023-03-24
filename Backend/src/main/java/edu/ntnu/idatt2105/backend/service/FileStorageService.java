@@ -1,6 +1,7 @@
 package edu.ntnu.idatt2105.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,12 +67,13 @@ public class FileStorageService {
         return file;
     }
 
-    public boolean deleteFile(String fileName) {
-        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-        File file = filePath.toFile();
-        if (!file.exists()) {
-            throw new RuntimeException("File not found: " + fileName);
+    public boolean deleteFolder(String folderName) throws IOException {
+        Path folderPath = this.fileStorageLocation.resolve(folderName).normalize();
+        File folder = folderPath.toFile();
+        if (!folder.exists()) {
+            throw new RuntimeException("Folder not found: " + folderName);
         }
-        return file.delete();
+        FileUtils.deleteDirectory(folder);
+        return true;
     }
 }
