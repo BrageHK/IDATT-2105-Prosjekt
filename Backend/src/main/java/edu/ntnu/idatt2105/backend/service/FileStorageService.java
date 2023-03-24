@@ -54,7 +54,7 @@ public class FileStorageService {
             return filename;
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store file " + originalFileName, e);
+            throw new RuntimeException("Failed to store file " + originalFileName + " New filename: " + filename, e);
         }
     }
 

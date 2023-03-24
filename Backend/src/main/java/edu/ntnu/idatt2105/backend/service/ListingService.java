@@ -7,8 +7,10 @@ import edu.ntnu.idatt2105.backend.Repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -183,5 +186,33 @@ public class ListingService {
 
     public String editListing(Long id, String email) {
     return null;
+    }
+
+    public String addPictures(Long id, String email, List<MultipartFile> files) {
+        if(files.isEmpty()) {
+            return "No files selected";
+        }
+        // check if file is image
+        for(MultipartFile file : files)
+            if(!Objects.requireNonNull(file.getContentType()).contains("image"))
+                return "File is not an image";
+
+        try {
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                for(MultipartFile file : files) {
+                    fileStorageService.handleFileUpload(file, id.toString(), Integer.toString(listingRepository.findById(id).get().getNumberOfPictures()));
+                    Listing listing = listingRepository.findById(id).get();
+                    listing.setNumberOfPictures(listing.getNumberOfPictures() + 1);
+                    listingRepository.save(listing);
+                }
+                return "Pictures added";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch (Exception e) {
+            logger.error("Error adding pictures to listing: " + e);
+            return "Error adding pictures to listing";
+        }
+
     }
 }

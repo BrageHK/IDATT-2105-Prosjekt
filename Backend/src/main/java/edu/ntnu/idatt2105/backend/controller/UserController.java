@@ -53,25 +53,5 @@ public class UserController {
         return ResponseEntity.ok(userService.getListingsToJson(user));
     }
 
-    @PostMapping("/getUser/addFavorite")
-    public ResponseEntity<String> addFavorite(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestParam("listingId") Long listingId
-    ) throws JsonProcessingException {
-        // Extract user ID from the JWT token
-        User user = userService.getUserFromJTW(authHeader);
 
-        return ResponseEntity.ok(userService.addFavorite(user, listingId));
-    }
-
-    @PostMapping("/getUser/removeFavorite")
-    public ResponseEntity<String> removeFavorite(
-            @RequestHeader("Authorization") String authHeader,
-            @RequestParam("listingId") Long listingId
-    ) throws JsonProcessingException {
-        // Extract user ID from the JWT token
-        User user = userService.getUserFromJTW(authHeader);
-
-        return ResponseEntity.ok(userService.removeFavorite(user, listingId));
-    }
 }

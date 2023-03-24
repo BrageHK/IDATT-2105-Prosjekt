@@ -1,8 +1,10 @@
 package edu.ntnu.idatt2105.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.model.Listing;
+import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import edu.ntnu.idatt2105.backend.service.UserService;
@@ -98,14 +100,35 @@ public class ListingController {
         return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail()));
     }
 
-    @PostMapping("/{id}/edit/addPicture")
+    @PostMapping("/{id}/edit/addPictures")
     public ResponseEntity<?> addPicture(
             @PathVariable Long id,
             @RequestHeader("Authorization") String authHeader,
             @RequestParam("files") List<MultipartFile> files
     ) {
-        //return ResponseEntity.ok(listingService.addPicture(id, userService.getUserFromJTW(authHeader).getEmail(), files));
-        return null;
+        return ResponseEntity.ok(listingService.addPictures(id, userService.getUserFromJTW(authHeader).getEmail(), files));
+    }
+
+    @GetMapping("/{id}/addFavorite")
+    public ResponseEntity<String> addFavorite(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long id
+    ) throws JsonProcessingException {
+        // Extract user ID from the JWT token
+        User user = userService.getUserFromJTW(authHeader);
+
+        return ResponseEntity.ok(userService.addFavorite(user, id));
+    }
+
+    @GetMapping("/{id}/removeFavorite")
+    public ResponseEntity<String> removeFavorite(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable Long id
+    ) throws JsonProcessingException {
+        // Extract user ID from the JWT token
+        User user = userService.getUserFromJTW(authHeader);
+
+        return ResponseEntity.ok(userService.removeFavorite(user, id));
     }
 
 }
