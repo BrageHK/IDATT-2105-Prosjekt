@@ -1,68 +1,103 @@
-<script setup lang="ts">
-import ShoppingListing from '@/components/Listing.vue';
+<script lang="ts">
+
+import Listingcardgrid from '@/components/Listingcardgrid.vue';
+import axios from 'axios';
+import { useGlobalState } from '@/globalState';
+import { onMounted, onUnmounted, ref } from 'vue'
+
+export default {
+	name: 'HomeView',
+	components: {
+		Listingcardgrid,
+	},
+	setup() {
+		const { serverIP } = useGlobalState();
+		
+		const Listing = ref<Array<any>>([]);
+		const isLoading = ref(false);
+		const page = ref(0);
+		
+		const token = localStorage.getItem('authToken');
+		const authorization = token ? {headers: {Authorization: 'Bearer ' + token}} : {};
+
+		const loadMore = () => {
+			if (!isLoading.value) {
+				isLoading.value = true;
+				axios
+					.post( serverIP.value + `/api/listing/search`, {
+						"filters": [],
+						"sorts": [],
+						"page": page.value,
+						"size": 15
+					},
+					authorization
+					)
+					.then((response) => {
+						page.value++;
+						Listing.value = [...Listing.value, ...response.data.content];
+						isLoading.value = false;
+					})
+					.catch((error) => {
+						console.error(error);
+						isLoading.value = false;
+					});
+			}
+		};
+
+		const observeBottom = () => {
+			const bottomElement = document.querySelector("#bottom-element");
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							loadMore();
+						}
+					});
+				},
+				{ threshold: 1 }
+			);
+			if (bottomElement) {
+				observer.observe(bottomElement);
+			}
+		};
+
+		onMounted(async () => {
+			await observeBottom();
+			loadMore();
+		});
+
+		onUnmounted(() => {
+			const bottomElement = document.querySelector("#bottom-element");
+			const observer = new IntersectionObserver(() => {}, { threshold: 1 });
+			if (bottomElement) {
+				observer.unobserve(bottomElement);
+			}
+		});
+		return {
+			Listing,
+		};
+	},
+};
+
 </script>
 
 <template>
-  <main>
-    <div class="grid">
-      <ShoppingListing v-for="id in 20" :id="id" />
-    </div>
-  </main>
+	<main>
+		<div class="grid-wrapper">
+			<listingcardgrid :Listings="Listing"/>
+			
+		</div>
+		<div id="bottom-element"></div>
+	</main>
 </template>
 
 <style scoped>
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(calc(20% - 1rem), 1fr));
-  grid-gap: 1rem;
-  margin-left: auto; 
-  margin-right: auto; 
-  max-width: 1524px;
+.grid-wrapper{
+	--max-width: 1524px; 
+	max-width: var(--max-width);
+	display: flex;
+	justify-content: center;
+	margin: 0 auto;
 }
-
-
-
-@media screen and (min-width: 480px) {
-  .grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-}
-
-@media screen and (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(calc(50% - 0.5rem), 1fr));
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, minmax(calc(33.33% - 0.666rem), 1fr));
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(4, minmax(calc(25% - 0.75rem), 1fr));
-  }
-}
-
-@media screen and (min-width: 1524px) {
-  .grid {
-    grid-template-columns: repeat(5, minmax(calc(20% - 1rem), 1fr));
-  }
-}
-
 </style>

@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ListingView from '../views/ListingView.vue';
+import LoginView from '../views/LoginView.vue';
+import CreateListingView from '../views/CreateListingView.vue';
+import UserviewVue from '@/views/Userview.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,31 +16,38 @@ const router = createRouter({
     {
       path: '/login',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/LoginView.vue')
+      component: LoginView
     },
     {
       path: '/listing/:id',
       component: ListingView,
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/create-listing',
+      name: 'create-listing',
+      component: CreateListingView,
       meta: { requiresAuth: true }
-    }
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: UserviewVue,
+      meta: { requiresAuth: true }
+    },
+
   ]
 }) 
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('authToken');
-
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    
     if (isAuthenticated) {
       next(); 
     } else {
       next({ path: '/login' }); 
     }
   } else if (to.path === '/login' && isAuthenticated) {
-    // Redirect to the home page if the user is authenticated and tries to access the login page
     next({ path: '/' });
   } else {
     next(); 
