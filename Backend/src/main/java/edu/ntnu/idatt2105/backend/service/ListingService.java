@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.filter.SearchRequest;
+import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +28,12 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
+
+    public Page<Listing> searchListing(SearchRequest request) {
+        SearchSpecification<Listing> specification = new SearchSpecification<>(request);
+        Pageable pageable = SearchSpecification.getPageable(request.getPage(), request.getSize());
+        return listingRepository.findAll(specification, pageable);
+    }
 
     public String deleteListing(long id, String email) {
         AtomicReference<String> message = new AtomicReference<>("");

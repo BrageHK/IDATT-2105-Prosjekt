@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,6 +53,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Listing> listings = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_favourites",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -97,5 +99,19 @@ public class User implements UserDetails {
     @Transient
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", address='" + address + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

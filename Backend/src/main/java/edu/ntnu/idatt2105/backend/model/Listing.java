@@ -1,11 +1,14 @@
 package edu.ntnu.idatt2105.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "listings")
-public class Listing {
+public class Listing implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1730538653948604611L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -48,27 +54,30 @@ public class Listing {
     @Column(name = "number_of_pictures", nullable = false)
     private int numberOfPictures;
 
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "favourites", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<User> favourites = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+
     @Override
     public String toString() {
-        return "Listing{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", briefDescription='" + briefDescription + '\'' +
-                ", category='" + category + '\'' +
-                ", address='" + address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", isSold=" + isSold +
-                ", price=" + price +
-                ", owner=" + owner +
+        return "{" +
+                "id:" + id +
+                ", 'description': '" + description + '\'' +
+                ", 'briefDescription': '" + briefDescription + '\'' +
+                ", 'category': '" + category + '\'' +
+                ", 'address': '" + address + '\'' +
+                ", 'latitude'': '" + latitude +
+                ", 'longitude': '" + longitude +
+                ", 'isSold': '" + isSold +
+                ", 'price': '" + price +
+                ", 'numberOfPictures': '" + numberOfPictures +
+                ", 'favourites': '" + favourites +
                 '}';
     }
 }

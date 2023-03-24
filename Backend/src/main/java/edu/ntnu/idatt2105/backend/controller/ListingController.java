@@ -1,15 +1,16 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
-import edu.ntnu.idatt2105.backend.model.User;
+import edu.ntnu.idatt2105.backend.filter.SearchRequest;
+import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import edu.ntnu.idatt2105.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,6 +59,19 @@ public class ListingController {
     @GetMapping("/get20")
     public ResponseEntity<String> get20Listings() {
         return ResponseEntity.ok(listingService.get20ListingsAsJson());
+    }
+
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<Listing> search(@RequestBody SearchRequest request) {
+        Page<Listing> page = listingService.searchListing(request);
+        Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
+        logger.info("Total elements"+page.getTotalElements());
+        logger.info("Total pages"+page.getTotalPages());
+        logger.info("Page number"+page.getNumber());
+        logger.info("Page size"+page.getSize());
+        logger.info("Page content"+page.getContent());
+        return page;
+
     }
 
     @GetMapping("/{id}/delete")
