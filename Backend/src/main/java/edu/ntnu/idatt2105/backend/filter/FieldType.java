@@ -1,7 +1,12 @@
-package edu.ntnu.idatt2105.backend.enums;
+package edu.ntnu.idatt2105.backend.filter;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
+// https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
 @Slf4j
 public enum FieldType {
 
@@ -32,6 +37,20 @@ public enum FieldType {
     LONG {
         public Object parse(String value) {
             return Long.valueOf(value);
+        }
+    },
+
+    DATE {
+        public Object parse(String value) {
+            Object date = null;
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                date = LocalDateTime.parse(value, formatter);
+            } catch (Exception e) {
+                log.info("Failed parse field type DATE {}", e.getMessage());
+            }
+
+            return date;
         }
     },
 
