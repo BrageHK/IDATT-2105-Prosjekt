@@ -1,10 +1,11 @@
 package edu.ntnu.idatt2105.backend.security.authentication;
 
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
-import edu.ntnu.idatt2105.backend.database.User;
+import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +19,10 @@ public class AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
+
     public AuthenticationResponse register(RegisterRequest request) {
+        logger.info("Registering user with email: " + request.getEmail());
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -36,6 +40,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        logger.info("Authenticating user with email: " + request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -49,15 +54,5 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
-/*
-    public AuthenticationResponse getUser(AuthenticationRequest request) {
-        var user = userRepository.findById(request.getId()
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
-    }
- */
 }
 

@@ -24,8 +24,11 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/demo-controller/**").permitAll()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/user/**").authenticated()
+                .requestMatchers("/src/main/resources/images/**").permitAll()
+                .requestMatchers("/api/images/**").permitAll()
+                .requestMatchers("/api/listing/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/user/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -34,7 +37,6 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
