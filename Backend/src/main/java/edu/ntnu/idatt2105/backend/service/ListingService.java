@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
@@ -184,8 +185,35 @@ public class ListingService {
                 .build();
     }
 
-    public String editListing(Long id, String email) {
-    return null;
+    public String editListing(Long id, String email, String listingJson) throws JsonProcessingException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            logger.info("ListingService: editListing: " + listingJson);
+            ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
+            logger.info("ListingService: editListing: " + listingDTO.toString());
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                Listing listing = listingRepository.findById(id).get();
+                if(listingDTO.getDescription() != null)
+                    listing.setDescription(listingDTO.getDescription());
+                if(listingDTO.getBriefDescription() != null)
+                    listing.setBriefDescription(listingDTO.getBriefDescription());
+                if(listingDTO.getCategory() != null)
+                    listing.setCategory(listingDTO.getCategory());
+                if(listingDTO.getAddress() != null)
+                    listing.setAddress(listingDTO.getAddress());
+                if(listingDTO.getLatitude() == 0L)
+                    listing.setLatitude(listingDTO.getLatitude());
+                if(listingDTO.getLongitude() == 0L)
+                    listing.setLongitude(listingDTO.getLongitude());
+                listingRepository.save(listing);
+                return "Listing edited";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch(Exception e) {
+            logger.error("Error editing listing: " + e);
+            return "Error editing listing";
+        }
     }
 
     public String addPictures(Long id, String email, List<MultipartFile> files) {
@@ -212,6 +240,25 @@ public class ListingService {
         } catch (Exception e) {
             logger.error("Error adding pictures to listing: " + e);
             return "Error adding pictures to listing";
+        }
+
+    }
+
+    public String removePicture(Long id, Long pictureId, String email) {
+        try {
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                fileStorageService.deleteFile(id.toString(), pictureId.toString());
+                fileStorageService.removeFileGaps(id.toString());
+                Listing listing = listingRepository.findById(id).get();
+                listing.setNumberOfPictures(listing.getNumberOfPictures() - 1);
+                listingRepository.save(listing);
+                return "Picture removed";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch (Exception e) {
+            logger.error("Error removing picture from listing: " + e);
+            return "Error removing picture from listing";
         }
 
     }

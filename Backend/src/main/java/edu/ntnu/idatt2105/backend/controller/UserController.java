@@ -35,7 +35,7 @@ public class UserController {
     @GetMapping("/getUser/favorites")
     public ResponseEntity<String> getUserFavourites(
             @RequestHeader("Authorization") String authHeader
-    ) throws JsonProcessingException {
+    ) {
         // Extract user ID from the JWT token
         User user = userService.getUserFromJTW(authHeader);
 
@@ -46,7 +46,7 @@ public class UserController {
     @GetMapping("/getUser/listings")
     public ResponseEntity<String> getUserListings(
             @RequestHeader("Authorization") String authHeader
-    ) throws JsonProcessingException {
+    ) {
         // Extract user ID from the JWT token
         User user = userService.getUserFromJTW(authHeader);
 
