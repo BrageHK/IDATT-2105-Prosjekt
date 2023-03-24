@@ -4,6 +4,7 @@ import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationRequest;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationResponse;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.authentication.RegisterRequest;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

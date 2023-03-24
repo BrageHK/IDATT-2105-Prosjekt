@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,10 @@ public class Listing implements Serializable {
     private double price;
     @Column(name = "number_of_pictures", nullable = false)
     private int numberOfPictures;
+    @Column(name = "date_created", nullable = false)
+    private LocalDateTime dateCreated;
+    @Column(name = "isFavoriteToCurrentUser")
+    private Boolean isFavoriteToCurrentUser;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "favourites", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

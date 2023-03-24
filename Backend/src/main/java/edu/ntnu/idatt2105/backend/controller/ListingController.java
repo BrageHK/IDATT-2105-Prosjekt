@@ -10,12 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 @RestController
 @CrossOrigin("*")
@@ -34,7 +38,7 @@ public class ListingController {
 
     // create listing
     @PostMapping("/create")
-    public ResponseEntity<?> createListing(
+    public ResponseEntity<String> createListing(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("listing") String listingJson,
             @RequestHeader("Authorization") String authHeader
@@ -52,7 +56,10 @@ public class ListingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getListing(@PathVariable Long id) {
+    public ResponseEntity<String> getListing(
+            @PathVariable Long id,
+            @RequestHeader(name = "Authorization", required = false) String authHeader
+    ) {
         return ResponseEntity.ok(listingService.getListingAsJson(id));
     }
 
@@ -62,8 +69,12 @@ public class ListingController {
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Listing> search(@RequestBody SearchRequest request) {
+    public Page<Listing> search(
+            @RequestBody SearchRequest request,
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
         Page<Listing> page = listingService.searchListing(request);
+        page = listingService.addFavoriteBoolean(page, userService.getUserFromJTW(authHeader).getEmail());
+
         Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
         logger.info("Total elements"+page.getTotalElements());
         logger.info("Total pages"+page.getTotalPages());
@@ -71,7 +82,6 @@ public class ListingController {
         logger.info("Page size"+page.getSize());
         logger.info("Page content"+page.getContent());
         return page;
-
     }
 
     @GetMapping("/{id}/delete")
@@ -81,9 +91,15 @@ public class ListingController {
     }
 
     @PostMapping("/{id}/edit")
-    public ResponseEntity<?> editListing(@PathVariable Long id) {
+    public ResponseEntity<?> editListing(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("listing") String listingJson
+    ) {
         // edit listing
-        return ResponseEntity.ok("Listing edited");
+        return null;
+        //return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail()));
     }
 
 }

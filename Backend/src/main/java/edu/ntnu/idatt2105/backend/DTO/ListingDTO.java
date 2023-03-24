@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,6 +23,7 @@ public class ListingDTO {
     private Boolean isSold;
     private double price;
     private int numberOfPictures;
+    private Boolean isFavoriteToCurrentUser;
 
     private Long ownerId;
 }

@@ -58,7 +58,7 @@ public class ListingService {
         ObjectMapper mapper = new ObjectMapper();
         String json = "";
         try {
-            json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get()));
+            json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get(), false));
         } catch (Exception e) {
             logger.error("Error converting listing to json: " + e);
         }
@@ -108,6 +108,7 @@ public class ListingService {
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
                     .numberOfPictures(files.size())
+                    .dateCreated(java.time.LocalDateTime.now())
                     .build();
 
             Listing savedListing = listingRepository.save(listing);
@@ -124,7 +125,30 @@ public class ListingService {
             logger.error("Error adding listing to database: " + e);
             return null;
         }
+    }
 
+    public Page<Listing> addFavoriteBoolean(Page<Listing> listings, String email) {
+        for(Listing listing : listings) {
+            listing.setIsFavoriteToCurrentUser(userRepository.findByEmail(email).get().getFavourites().contains(listing));
+        }
+        return listings;
+    }
+
+    public ListingDTO convertToListingDTO(Listing listing, Boolean isFavoriteToCurrentUser) {
+        return ListingDTO.builder()
+                .id(listing.getId())
+                .description(listing.getDescription())
+                .briefDescription(listing.getBriefDescription())
+                .category(listing.getCategory())
+                .address(listing.getAddress())
+                .latitude(listing.getLatitude())
+                .longitude(listing.getLongitude())
+                .isSold(listing.getIsSold())
+                .price(listing.getPrice())
+                .numberOfPictures(listing.getNumberOfPictures())
+                .ownerId(listing.getOwner().getId())
+                .isFavoriteToCurrentUser(isFavoriteToCurrentUser)
+                .build();
     }
 
     public ListingDTO convertToListingDTO(Listing listing) {
@@ -140,6 +164,7 @@ public class ListingService {
                 .price(listing.getPrice())
                 .numberOfPictures(listing.getNumberOfPictures())
                 .ownerId(listing.getOwner().getId())
+                .isFavoriteToCurrentUser(false)
                 .build();
     }
 }

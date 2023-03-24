@@ -60,6 +60,10 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "listing_id"))
     private List<Listing> favourites = new ArrayList<>();
 
+    public List<Listing> getFavourites() {
+        return favourites;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.toString()));

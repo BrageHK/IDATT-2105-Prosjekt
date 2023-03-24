@@ -59,7 +59,7 @@ public class UserService {
         List<Listing> favourites = user.getFavourites();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: favourites) {
-            listingDTOS.add(listingService.convertToListingDTO(listing));
+            listingDTOS.add(listingService.convertToListingDTO(listing, true));
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -106,7 +106,7 @@ public class UserService {
         List<Listing> listings = user.getListings();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: listings) {
-            listingDTOS.add(listingService.convertToListingDTO(listing));
+            listingDTOS.add(listingService.convertToListingDTO(listing, user.getFavourites().contains(listing)));
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {

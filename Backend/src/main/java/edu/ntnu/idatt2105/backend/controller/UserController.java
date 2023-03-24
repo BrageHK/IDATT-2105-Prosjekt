@@ -42,6 +42,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getFavoritesToJson(user));
     }
 
+    // Owned listings
     @GetMapping("/getUser/listings")
     public ResponseEntity<String> getUserListings(
             @RequestHeader("Authorization") String authHeader
