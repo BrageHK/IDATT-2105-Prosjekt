@@ -1,44 +1,44 @@
 <template>
 	<div class="create-listing listing-view">
-		<h1>Create Listing</h1>
+		<h1>{{ $t('createListing') }}</h1>
 		<form @submit.prevent="submitForm">
 			<div class="listing-details">
 				<div>
-					<label for="name">Name:</label>
+					<label for="name">{{ $t('name') }}:</label>
 					<input type="text" id="name" v-model="listingData.briefDescription" required />
 				</div>
 				<div>
-					<label for="price">Price:</label>
+					<label for="price">{{ $t('price') }}:</label>
 					<input type="number" id="price" v-model="listingData.price" required />
 				</div>
 				<div>
-					<label for="image">Image:</label>
+					<label for="image">{{ $t('image') }}:</label>
 					<div class="image-previews">
 						<img v-for="(preview, index) in imagePreviews" :key="index" :src="preview" alt="Preview" />
 					</div>
 					<input type="file" id="image" multiple @change="onImageChange" required />
 				</div>
 				<div>
-					<label for="description">Description:</label>
+					<label for="description">{{ $t('description') }}:</label>
 					<textarea id="description" v-model="listingData.description" required></textarea>
 				</div>
 				<div>
-					<label for="category">Category:</label>
+					<label for="category">{{ $t('category') }}:</label>
 					<input type="text" id="category" v-model="listingData.category" required />
 				</div>
 				<div>
-					<label for="address">Address:</label>
+					<label for="address">{{ $t('address') }}:</label>
 					<input type="text" id="address" v-model="listingData.address" required />
 				</div>
 				<div>
-					<label for="latitude">Latitude:</label>
+					<label for="latitude">{{ $t('latitude') }}:</label>
 					<input type="number" id="latitude" v-model="listingData.latitude" step="any" required />
 				</div>
 				<div>
-					<label for="longitude">Longitude:</label>
+					<label for="longitude">{{ $t('longitude') }}:</label>
 					<input type="number" id="longitude" v-model="listingData.longitude" step="any" required />
 				</div>
-				<button type="submit">Create Listing</button>
+				<button type="submit">{{ $t('createListing') }}</button>
 			</div>
 		</form>
 	</div>

@@ -2,9 +2,9 @@
 	<div class="container">
 		<component :is="activeComponent" @switch-component="switchComponent" />
 		<p>
-			{{ activeComponent === 'Login' ? "Har du ikke konto? " : 'Har du allerede konto? ' }}
+			{{ activeComponent === 'Login' ? $t('noAccount') : $t('alreadyHaveAccount') }}
 			<a href="#" @click.prevent="switchComponent">
-				{{ activeComponent === 'Login' ? 'Opprett konto' : 'Logg inn' }}
+				{{ activeComponent === 'Login' ? $t('createAccount') : $t('signIn')}}
 			</a>
 		</p>
 	</div>

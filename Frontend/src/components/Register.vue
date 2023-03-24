@@ -1,32 +1,32 @@
 <template>
 	<div class="signup-container">
-		<h2>Opprett konto</h2>
+		<h2>{{ $t('createAccount') }}</h2>
 		<form @submit.prevent="handleSubmit">
 			<div class="form-group">
-				<label for="name">Fornavn:</label>
+				<label for="name">{{ $t('firstName') }}:</label>
 				<input type="text" id="firstname" v-model="firstName" required />
 			</div>
 			<div class="form-group">
-				<label for="name">Etternavn:</label>
+				<label for="name">{{ $t('lastName') }}:</label>
 				<input type="text" id="lastname" v-model="lastName" required />
 			</div>
 			<div class="form-group">
-				<label for="email">Epost:</label>
+				<label for="email">{{ $t('email') }}:</label>
 				<input type="email" id="email" v-model="email" required />
 			</div>
 			<div class="form-group">
-				<label for="address">Adresse:</label>
+				<label for="address">{{ $t('address') }}:</label>
 				<input type="text" id="address" v-model="address" required />
 			</div>
 			<div class="form-group">
-				<label for="password">Passord:</label>
+				<label for="password">{{ $t('password') }}:</label>
 				<input type="password" id="password" v-model="password" required />
 			</div>
 			<div class="form-group">
-				<label for="phoneNumber">Telefonnummer:</label>
+				<label for="phoneNumber">{{ $t('phone') }}:</label>
 				<input type="number" id="phoneNumber" v-model="phoneNumber" required />
 			</div>
-			<button type="submit">Opprett</button>
+			<button type="submit">{{ $t('create') }}</button>
 	  </form>
 	</div>
 </template>
