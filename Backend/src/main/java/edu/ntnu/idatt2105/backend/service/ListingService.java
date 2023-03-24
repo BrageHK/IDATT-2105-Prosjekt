@@ -119,6 +119,7 @@ public class ListingService {
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
+                    .isFavoriteToCurrentUser(false)
                     .numberOfPictures(files.size())
                     .dateCreated(java.time.LocalDateTime.now())
                     .build();

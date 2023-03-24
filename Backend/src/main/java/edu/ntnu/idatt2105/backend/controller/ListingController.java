@@ -98,4 +98,14 @@ public class ListingController {
         return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail()));
     }
 
+    @PostMapping("/{id}/edit/addPicture")
+    public ResponseEntity<?> addPicture(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("files") List<MultipartFile> files
+    ) {
+        //return ResponseEntity.ok(listingService.addPicture(id, userService.getUserFromJTW(authHeader).getEmail(), files));
+        return null;
+    }
+
 }
