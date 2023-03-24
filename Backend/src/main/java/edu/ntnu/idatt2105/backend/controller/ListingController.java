@@ -60,9 +60,13 @@ public class ListingController {
             @PathVariable Long id,
             @RequestHeader(name = "Authorization", required = false) String authHeader
     ) {
-        return ResponseEntity.ok(listingService.getListingAsJson(id));
+        if (authHeader != null)
+            return ResponseEntity.ok(listingService.getListingAsJson(id, userService.getUserFromJTW(authHeader).getEmail()));
+        else
+            return ResponseEntity.ok(listingService.getListingAsJson(id));
     }
 
+    // Deprecated, use search instead
     @GetMapping("/get20")
     public ResponseEntity<String> get20Listings() {
         return ResponseEntity.ok(listingService.get20ListingsAsJson());
@@ -73,14 +77,8 @@ public class ListingController {
             @RequestBody SearchRequest request,
             @RequestHeader(name = "Authorization", required = false) String authHeader) {
         Page<Listing> page = listingService.searchListing(request);
-        page = listingService.addFavoriteBoolean(page, userService.getUserFromJTW(authHeader).getEmail());
-
-        Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
-        logger.info("Total elements"+page.getTotalElements());
-        logger.info("Total pages"+page.getTotalPages());
-        logger.info("Page number"+page.getNumber());
-        logger.info("Page size"+page.getSize());
-        logger.info("Page content"+page.getContent());
+        if(authHeader != null)
+            page = listingService.addFavoriteBoolean(page, userService.getUserFromJTW(authHeader).getEmail());
         return page;
     }
 
@@ -97,9 +95,7 @@ public class ListingController {
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("listing") String listingJson
     ) {
-        // edit listing
-        return null;
-        //return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail()));
+        return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail()));
     }
 
 }

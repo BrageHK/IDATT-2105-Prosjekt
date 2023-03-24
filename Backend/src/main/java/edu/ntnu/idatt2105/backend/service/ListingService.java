@@ -65,6 +65,18 @@ public class ListingService {
         return json;
     }
 
+    public String getListingAsJson(long id, String email) {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get(),
+                    userRepository.findByEmail(email).get().getFavourites().contains(listingRepository.findById(id).get())));
+        } catch (Exception e) {
+            logger.error("Error converting listing to json: " + e);
+        }
+        return json;
+    }
+
     public String get20ListingsAsJson() {
         logger.info("Starting to convert listings to json");
         ObjectMapper mapper = new ObjectMapper();
@@ -166,5 +178,9 @@ public class ListingService {
                 .ownerId(listing.getOwner().getId())
                 .isFavoriteToCurrentUser(false)
                 .build();
+    }
+
+    public String editListing(Long id, String email) {
+    return null;
     }
 }
