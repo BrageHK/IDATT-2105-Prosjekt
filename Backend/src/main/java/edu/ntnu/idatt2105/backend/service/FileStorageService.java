@@ -1,8 +1,8 @@
 package edu.ntnu.idatt2105.backend.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,10 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class FileStorageService {
 
     private final Path fileStorageLocation;
@@ -27,18 +26,35 @@ public class FileStorageService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        try {
-            if (fileName.contains("..")) {
-                throw new RuntimeException("Invalid file name: " + fileName);
-            }
+    public String handleFileUpload(MultipartFile file, String id, String filename) {
+        String originalFileName = file.getOriginalFilename();
+        String extension = "";
 
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
+        // Extract the file extension from the original file name
+        if (originalFileName != null && originalFileName.lastIndexOf(".") > 0) {
+            extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        }
+
+        // Check if the file type is supported
+        if (!extension.matches("(?i)(jpg|jpeg|png|gif|bmp)")) {
+            throw new RuntimeException("File type not supported: " + extension);
+        }
+
+        // Construct the target location for the uploaded file
+        Path targetLocation = Paths.get(fileStorageLocation + "/" + id + "/" + filename);
+
+        try {
+            // Create the target directory if it doesn't exist
+            Files.createDirectories(targetLocation.getParent());
+
+            // Copy the file contents to the target location
+            Files.copy(file.getInputStream(), targetLocation);
+
+            // Return the filename without the extension
+            return filename;
+
         } catch (IOException e) {
-            throw new RuntimeException("Could not store the file: " + fileName, e);
+            throw new RuntimeException("Failed to store file " + originalFileName, e);
         }
     }
 
@@ -51,12 +67,13 @@ public class FileStorageService {
         return file;
     }
 
-    public boolean deleteFile(String fileName) {
-        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-        File file = filePath.toFile();
-        if (!file.exists()) {
-            throw new RuntimeException("File not found: " + fileName);
+    public boolean deleteFolder(String folderName) throws IOException {
+        Path folderPath = this.fileStorageLocation.resolve(folderName).normalize();
+        File folder = folderPath.toFile();
+        if (!folder.exists()) {
+            throw new RuntimeException("Folder not found: " + folderName);
         }
-        return file.delete();
+        FileUtils.deleteDirectory(folder);
+        return true;
     }
 }

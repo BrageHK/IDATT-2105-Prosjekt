@@ -1,11 +1,13 @@
 package edu.ntnu.idatt2105.backend.security;
 
+import edu.ntnu.idatt2105.backend.Repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
@@ -19,6 +21,9 @@ import java.util.function.Function;
 public class JWTService {
 
     private static final String KEY_SECRET = "5368566D597133743677397A24432646294A404E635266556A576E5A72347537";
+
+    @Autowired
+    private UserRepository userRepository;
 
     // expire in 60 minutes
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -52,6 +57,11 @@ public class JWTService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public long extractId(String token) {
+        String mail = extractUsername(token);
+        return userRepository.findByEmail(mail).get().getId();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
