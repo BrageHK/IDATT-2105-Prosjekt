@@ -1,33 +1,33 @@
 <template>
 	<div class="user-info">
-		<h2>User Information</h2>
+		<h2>{{ $t('userInfo') }}</h2>
 		<div v-if="user" class="form">
 			<div class="form-group">
-				<label for="first-name">First Name:</label>
+				<label for="first-name">{{ $t('firstName') }}:</label>
 				<input id="first-name" v-model="user.firstName" />
 			</div>
 			<div class="form-group">
-				<label for="last-name">Last Name:</label>
+				<label for="last-name">{{ $t('lastName') }}:</label>
 				<input id="last-name" v-model="user.lastName" />
 			</div>
 			<div class="form-group">
-				<label for="email">Email:</label>
+				<label for="email">{{ $t('email') }}:</label>
 				<input id="email" v-model="user.email" />
 			</div>
 			<div class="form-group">
-				<label for="phone">Phone:</label>
+				<label for="phone">{{ $t('phone') }}:</label>
 				<input id="phone" v-model="user.phoneNumber" />
 			</div>
 			<div class="form-group">
-				<label for="address">Address:</label>
+				<label for="address">{{ $t('address') }}:</label>
 				<input id="address" v-model="user.address" />
 			</div>
 			<div class="form-group">
-				<button @click="saveUser">Save</button>
+				<button @click="saveUser">{{ $t('save') }}</button>
 			</div>
 		</div>
 		<div v-else>
-			<p>Loading user information...</p>
+			<p>{{ $t('loadUserInfo') }}</p>
 		</div>
 	</div>
 </template>

@@ -2,9 +2,9 @@
 	<div class="sidebar">
 		<nav>
 			<ul>
-				<li @click="selectedOption = 'user-info'">User Info</li>
-				<li @click="selectedOption = 'my-listings'">My Listings</li>
-				<li @click="selectedOption = 'favorite-listings'">Favorite Listings</li>
+				<li @click="selectedOption = 'user-info'">{{ $t('userInfo') }}</li>
+				<li @click="selectedOption = 'my-listings'">{{ $t('myListings') }}</li>
+				<li @click="selectedOption = 'favorite-listings'">{{ $t('favoriteListings') }}</li>
 			</ul>
 		</nav>
 		<div v-if="selectedOption === 'user-info'">

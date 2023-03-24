@@ -1,16 +1,16 @@
 <template>
 	<div class="login-container">
-		<h2>Logg inn</h2>
+		<h2>{{ $t('signIn') }}</h2>
 		<form @submit.prevent="handleSubmit">
 			<div class="form-group">
-				<label for="email">Epost:</label>
+				<label for="email">{{ $t('email') }}:</label>
 				<input type="email" id="email" v-model="email" required />
 			</div>
 			<div class="form-group">
-				<label for="password">Passord:</label>
+				<label for="password">{{ $t('password') }}:</label>
 				<input type="password" id="password" v-model="password" required />
 			</div>
-			<button type="submit">Logg inn</button>
+			<button type="submit">{{ $t('signIn') }}</button>
 		</form>
 	</div>
 </template>

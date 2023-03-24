@@ -8,15 +8,15 @@
         <div class="listing-details">
             <h2>{{ briefDescription }}</h2>
             <span>{{ price + ' NOK' }}</span>
-            <p>Kategori: {{ category }}</p>
+            <p>{{ $t('category') }}: {{ category }}</p>
             <div class="listing-actions">
-                <button @click="">kontakt selger</button>
+                <button @click="">{{ $t('contactSeller') }}</button>
                 <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon"/>
             </div>
             <p>{{ description }}</p>
-            <p>Addresse: {{ address }}</p>
-            <p>Latitude: {{ latitude }}</p>
-            <p>Longitude: {{ longitude }}</p>
+            <p>{{ $t('address') }}: {{ address }}</p>
+            <p>{{ $t('latitude') }}: {{ latitude }}</p>
+            <p>{{ $t('longitude') }}: {{ longitude }}</p>
         </div>
     </div>
 </template>

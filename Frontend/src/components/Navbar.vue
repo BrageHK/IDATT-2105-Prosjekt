@@ -2,26 +2,49 @@
 	<div class="wrapper">
 		<nav>
 			<RouterLink to="/"><img :src="logoPath" alt="My Logo" class="logo" /></RouterLink>
-			<div v-if="isAuthenticated"><router-link class="nav-link" to="/create-listing">Lag ny Annonse</router-link></div>
-			<div v-if="isAuthenticated"><router-link class="nav-link" to="/user">Min side</router-link></div>
-			<div v-if="!isAuthenticated"><router-link class="nav-link" to="/login">Log In</router-link></div>
-			<div v-if="isAuthenticated" class="nav-link" @click="logout">logg ut</div>
+			<div v-if="isAuthenticated"><router-link class="nav-link" to="/create-listing">{{ $t('createListing') }}</router-link></div>
+			<div v-if="isAuthenticated"><router-link class="nav-link" to="/user">{{ $t('myPage') }}</router-link></div>
+			<div v-if="!isAuthenticated"><router-link class="nav-link" to="/login">{{ $t('signIn') }}</router-link></div>
+			<div v-if="isAuthenticated" class="nav-link" @click="logout">{{ $t('signOut') }}</div>
+			<div>
+    			<select @change="changeLanguage" v-model="selectedLanguage">
+      				<option value="en">English</option>
+      				<option value="nb">Bokmål</option>
+					<option value="nn">NyNorsk</option>
+					<option value="ja">日本</option>
+    			</select>
+  			</div>
 		</nav>
 	</div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 	import logoPath from '@/assets/images/logo.svg';
 	import router from '@/router';
 	import { ref } from 'vue';
 
-	const isAuthenticated = ref(!!localStorage.getItem('authToken'));
+	export default {
+		name: 'Navbar',
+		data() {
+			return {
+				selectedLanguage: this.$i18n.locale,
+				isAuthenticated: ref(!!localStorage.getItem('authToken')),
+				logoPath: logoPath,
+			};
+		},
+		methods: {
+    		changeLanguage() {
+      			this.$i18n.locale = this.selectedLanguage;
+    		},
+			logout() {
+				localStorage.removeItem('authToken');
+				window.location.reload();
+				router.push('/');
+			},
+  		},
+	};
 
-	function logout() {
-		localStorage.removeItem('authToken');
-		window.location.reload();
-		router.push('/');
-	}
+	
 </script>
 
 <style scoped>
