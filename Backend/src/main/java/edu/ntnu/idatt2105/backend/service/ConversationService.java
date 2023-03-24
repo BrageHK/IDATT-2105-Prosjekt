@@ -47,11 +47,16 @@ public class ConversationService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        Message message = new Message();
-        message.setContent(content);
-        message.setTimestamp(LocalDateTime.now());
-        message.setSender(sender);
-        message.setConversation(conversation);
+        if(conversation.getBuyer() != sender && conversation.getSeller() != sender) {
+            throw new UserNotFoundException("User not part of conversation");
+        }
+
+        Message message = Message.builder()
+                .content(content)
+                .timestamp(LocalDateTime.now())
+                .sender(sender)
+                .conversation(conversation)
+                .build();
 
         return messageRepository.save(message);
     }
