@@ -15,7 +15,6 @@ public class WebSocketController {
     public void sendMessage(String message) {
         // You can customize this method to handle the message as needed.
         // For example, you can save the message to the database or process it in some other way.
-        // eg elske mat
         //conversationService.getOrCreateConversation("/topic/messages", message);
     }
 }

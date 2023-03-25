@@ -1,5 +1,7 @@
 package edu.ntnu.idatt2105.backend.controller;
 
+import edu.ntnu.idatt2105.backend.service.FileStorageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,34 +19,17 @@ import java.nio.file.Files;
 @RequiredArgsConstructor
 public class FileController {
 
+    private final FileStorageService fileStorageService;
     /**
-     * Get image from server by id.
-     * @param id id of the listing the image belongs to.
-     * @param id2 id of the image.
-     * @return image as byte array.
-     * @throws IOException if file not found.
+     * Get image from server by listing ID and image ID.
+     *
+     * @param listingId id of the listing the image belongs to
+     * @param imageId id of the image. ID starts with 0
+     * @return image as byte array or error message
      */
-    @GetMapping("/{id}/{id2}")
-    public ResponseEntity<byte[]> getFile(@PathVariable Long id, @PathVariable Long id2) throws IOException {
-        String filePath = "src/main/resources/images/" + id + "/" + id2;
-
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            throw new FileNotFoundException("File not found: " + filePath);
-        }
-
-        // Read the contents of the file into a byte array
-        byte[] fileContent = Files.readAllBytes(file.toPath());
-
-        // Set the content type and content disposition headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        headers.setContentDispositionFormData("attachment", Long.toString(id2));
-
-        // Return the file content as a ResponseEntity
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(fileContent);
+    @Operation(summary = "Get image from server by id", description = "Get image from server by listing ID and image ID.")
+    @GetMapping("/{listingId}/{imageId}")
+    public ResponseEntity<byte[]> getFile(@PathVariable Long listingId, @PathVariable Long imageId) {
+       return fileStorageService.getImageInListing(listingId.toString(), imageId.toString());
     }
 }

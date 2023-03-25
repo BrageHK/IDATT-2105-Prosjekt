@@ -9,15 +9,20 @@ import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import edu.ntnu.idatt2105.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -39,125 +44,183 @@ public class ListingController {
      * Create a new listing. The user must be logged in to create a listing. The listing is created
      * from a JSON string and a list of images. The images are saved to the server and are connected to the listing.
      *
-     * @param files List of images
-     * @param listingJson JSON string of the listing
-     * @return
+     * @param files List of images.
+     * @param listingJson JSON string of the listing.
+     * @return Status code 201 if listing is created, 400 if listing is not created, 401 if not authenticated.
      */
+    @Operation(summary = "Create a new listing", description = "The user must be logged in to create a listing." +
+            " The listing is created from a JSON string and a list of images. The images are saved to the server" +
+            " and are connected to the listing.")
     @PostMapping("/create")
     public ResponseEntity<String> createListing(
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("listing") String listingJson // TODO: Change to DTO
-    ) {
+            @RequestParam("listing") String listingJson // TODO: Change to DTO?
+    ) throws UnknownHostException {
         if(!jwtService.isAuthenticated()) {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
         String email = jwtService.getAuthenticatedUserEmail();
 
-        String returnMessage;
         Long num;
         if((num = listingService.addListing(listingJson, files, email)) != null) {
-            returnMessage = num.toString();
+            return ResponseEntity.created(URI.create(InetAddress.getLocalHost().getHostAddress()+"api/listing/"+num))
+                    .body("Listing created with id: " + num);
         } else {
-            returnMessage = "Listing not created, please check you input data";
+            return ResponseEntity.badRequest().body("Listing not created");
         }
-        return ResponseEntity.ok(returnMessage);
     }
 
     /**
      * Get listing by id as JSON. If the user is logged in, the favorite boolean is added to the listing.
      * User don't have to be logged in to get the listing.
      *
-     * @param id ID if the listing
-     * @param authHeader JWT token
-     * @return Listing as JSON
+     * @param id ID if the listing.
+     * @return Listing as JSON.
      */
+    @Operation(summary = "Get a listing by id as JSON", description = "If the user is logged in, the favorite boolean "+
+            "is added to the listing. User don't have to be logged in to get the listing.")
     @GetMapping("/{id}")
     public ResponseEntity<String> getListing(
-            @PathVariable Long id,
-            @RequestHeader(name = "Authorization", required = false) String authHeader
+            @PathVariable Long id
     ) {
-        if (authHeader != null)
-            return ResponseEntity.ok(listingService.getListingAsJson(id, userService.getUserFromJTW(authHeader).getEmail()));
-        else
-            return ResponseEntity.ok(listingService.getListingAsJson(id));
+        return listingService.getListingAsJson(id);
     }
 
-    // Deprecated, use search instead
+    /**
+     * Get 20 listings as JSON. The search method is strictly better than this method.
+     * @return 20 listings as JSON.
+     */
+    @Deprecated
+    @Operation(summary = "Get 20 listings as JSON", description = "The search method is strictly better than this method.")
     @GetMapping("/get20")
     public ResponseEntity<String> get20Listings() {
         return ResponseEntity.ok(listingService.get20ListingsAsJson());
     }
 
+    /**
+     * Search for listings. It is possible to search for every field in the listing. It is also possible to
+     * filter for every field in the listing.
+     *
+     * @param request Request body with search and filter parameters.
+     * @return Page of listings.
+     */
+    @Operation(summary = "Search for listings", description = "It is possible to search for every field in the listing." +
+            " It is also possible to filter for every field in the listing.")
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Listing> search(
-            @RequestBody SearchRequest request,
-            @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        Page<Listing> page = listingService.searchListing(request);
-        logger.info("AuthHeader: " + authHeader);
-        if(authHeader != null)
-            page = listingService.addFavoriteBoolean(page, userService.getUserFromJTW(authHeader).getEmail());
-        return page;
+    public ResponseEntity<Page<Listing>> search(
+            @RequestBody SearchRequest request) {
+        try {
+            Page<Listing> page = listingService.searchListing(request);
+            if(jwtService.isAuthenticated())
+                page = listingService.addFavoriteBoolean(page);
+            return ResponseEntity.ok(page);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+            return ResponseEntity.status(400).build();
+        }
+
     }
 
-    @GetMapping("/{id}/delete")
-    public ResponseEntity<?> deleteListing(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
-        // delete listing
-        return ResponseEntity.ok(listingService.deleteListing(id, userService.getUserFromJTW(authHeader).getEmail()));
+    /**
+     * Deletes a listing. The user must be logged in to delete a listing.
+     *
+     * @param id ID of the listing.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Delete a listing", description = "The user must be logged in to delete a listing.")
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> deleteListing(@PathVariable Long id) {
+        if(listingService.deleteListing(id))
+            return ResponseEntity.ok("Listing deleted");
+        else
+            return ResponseEntity.status(401).body("Listing not deleted, please check your input data and that you" +
+                    " are logged in");
     }
 
-    @PostMapping("/{id}/edit")
+    /**
+     * Edit a listing. The user must be logged in to edit a listing.
+     *
+     * @param id ID of the listing you want to edit.
+     * @param listingDTO The new listing data.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Edit a listing", description = "The user must be logged in to edit a listing.")
+    @PutMapping("/{id}/edit")
     public ResponseEntity<String> editListing(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String authHeader,
             @RequestBody ListingDTO listingDTO
-    ) throws JsonProcessingException {
-        Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
-        logger.info("Listing: " + listingDTO.toString());
-        logger.info("Is authenticated: " + jwtService.isAuthenticated());
-        logger.info("Mail: " + jwtService.getAuthenticatedUserEmail());
-        logger.info("Id: " + jwtService.getAuthenticatedUserId());
-        return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail(),
-                listingDTO));
+    ) {
+        return listingService.editListing(id, listingDTO);
     }
 
-    @PostMapping("/{id}/edit/addPictures")
-    public ResponseEntity<?> addPicture(
+    /**
+     * Add pictures to a listing. The user must be logged in to add pictures to a listing.
+     *
+     * @param id ID of the listing.
+     * @param files List of images.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Add pictures to a listing", description = "The user must be logged and own the listing " +
+            "to add pictures to the listing.")
+    @PutMapping("/{id}/edit/addPictures")
+    public ResponseEntity<String> addPicture(
             @PathVariable Long id,
-            @RequestHeader("Authorization") String authHeader,
             @RequestParam("files") List<MultipartFile> files
     ) {
-        return ResponseEntity.ok(listingService.addPictures(id, userService.getUserFromJTW(authHeader).getEmail(), files));
+        return listingService.addPictures(id, files);
     }
 
-    @GetMapping("/{id}/edit/removePicture/{pictureId}")
+    /**
+     * Remove a picture from a listing. The user must be logged in to remove a picture from a listing.
+     * The user must be the owner of the listing to remove a picture.
+     *
+     * @param id ID of the listing.
+     * @param pictureId ID of the picture.
+     * @return
+     */
+    @Operation(summary = "Remove a picture from a listing", description = "The user must be logged in to remove a " +
+            "picture from a listing. The user must be the owner of the listing to remove a picture.")
+    @PutMapping("/{id}/edit/removePicture/{pictureId}")
     public ResponseEntity<String> removePicture(
             @PathVariable Long id,
-            @PathVariable Long pictureId,
-            @RequestHeader("Authorization") String authHeader
+            @PathVariable Long pictureId
     ) {
-        return ResponseEntity.ok(listingService.removePicture(id, pictureId, userService.getUserFromJTW(authHeader).getEmail()));
+        return listingService.removePicture(id, pictureId);
     }
 
-    @GetMapping("/{id}/addFavorite")
+    /**
+     * Add a listing to the favorites of the user. The user must be logged in to add a listing to the favorites.
+     * The user can't add a listing to the favorites if the listing is already in the favorites.
+     *
+     * @param id ID of the listing.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Add a listing to the favorites of the user", description = "The user must be logged in to " +
+            "add a listing to the favorites. The user can't add a listing to the favorites if the listing is already " +
+            "in the favorites.")
+    @PostMapping("/{id}/addFavorite")
     public ResponseEntity<String> addFavorite(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long id
-    ) throws JsonProcessingException {
-        // Extract user ID from the JWT token
-        User user = userService.getUserFromJTW(authHeader);
-
-        return ResponseEntity.ok(userService.addFavorite(user, id));
+    ) {
+        return userService.addFavorite(id);
     }
 
-    @GetMapping("/{id}/removeFavorite")
+    /**
+     * Remove a listing from the favorites of the user. The user must be logged in to remove a listing from the
+     * favorites. The user can't remove a listing from the favorites if the listing is not in the favorites.
+     *
+     * @param id ID of the listing.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Remove a listing from the favorites of the user", description = "The user must be logged in "+
+            "to remove a listing from the favorites. The user can't remove a listing from the favorites if the " +
+            "listing is not in the favorites.")
+    @DeleteMapping("/{id}/removeFavorite")
     public ResponseEntity<String> removeFavorite(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable Long id
-    ) throws JsonProcessingException {
-        // Extract user ID from the JWT token
-        User user = userService.getUserFromJTW(authHeader);
-
-        return ResponseEntity.ok(userService.removeFavorite(user, id));
+    ) {
+        return userService.removeFavorite(id);
     }
 
 }

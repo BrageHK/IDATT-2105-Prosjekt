@@ -11,6 +11,7 @@ import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,36 +71,47 @@ public class UserService {
         return null;
     }
 
-    public String addFavorite(User user, Long listingId) {
+    public ResponseEntity<String> addFavorite(Long listingId) {
         try {
+            User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
             List<Listing> favourites = user.getFavourites();
             Listing listing = listingRepository.findById(listingId).get();
             if (favourites.contains(listing)) {
-                return "Listing already in favourites";
+                return ResponseEntity.badRequest().body("Listing already in favourites");
             }
             favourites.add(listing);
             user.setFavourites(favourites);
             userRepository.save(user);
-            return "Listing added to favourites";
+            return ResponseEntity.ok("Listing added to favourites");
         } catch (Exception e) {
-            return "Listing couldn't be added to favourites: " + e.getMessage();
+            return ResponseEntity.badRequest().body("Listing couldn't be added to favourites: " + e.getMessage());
         }
     }
 
-    public String removeFavorite(User user, Long listingID) {
+    /**
+     * Removes a listing from the authenticated user's favourites.
+     * Returns a bad request if the listing is not in the user's favourites.
+     * Returns a bad request if the listing does not exist.
+     * Returns a bad request if the user does not exist.
+     * Returns ok if the listing was removed from the user's favourites.
+     *
+     * @param listingID the id of the listing to be removed from the user's favourites
+     * @return a response entity with the appropriate status code and message
+     */
+    public ResponseEntity<String> removeFavorite(Long listingID) {
         try {
+            User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
             Listing listing = listingRepository.findById(listingID).get();
             List<Listing> favourites = user.getFavourites();
             if (!favourites.remove(listing)) {
-                return "Listing not in favourites";
+                return ResponseEntity.badRequest().body("Listing not in favourites");
             }
             user.setFavourites(favourites);
             userRepository.save(user);
-            return "Listing removed from favourites";
+            return ResponseEntity.ok("Listing removed from favourites");
         } catch (Exception e) {
-            return "Listing couldn't be removed from favourites: " + e.getMessage();
+            return ResponseEntity.badRequest().body("Listing couldn't be removed from favourites: " + e.getMessage());
         }
-
     }
 
     public String getListingsToJson(User user) {
@@ -115,5 +127,35 @@ public class UserService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Checks if the authenticated user owns the listing with the given id. Returns true if the user owns the listing,
+     * false otherwise.
+     *
+     * @param id the id of the listing to be checked
+     * @return a response entity with the appropriate status code and message
+     */
+    public ResponseEntity<Boolean> isOwnedByUser(Long id) {
+        if (jwtService.isAuthenticated()) {
+            User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
+            Listing listing = listingRepository.findById(id).get();
+            return ResponseEntity.ok(user.getListings().contains(listing));
+        } else {
+            return ResponseEntity.badRequest().body(false);
+        }
+    }
+
+    public ResponseEntity<String> editUser(User user, UserDTO userDTO) {
+        if(userDTO.getFirstName() != null)
+            user.setFirstName(userDTO.getFirstName());
+        if(userDTO.getLastName() != null)
+            user.setLastName(userDTO.getLastName());
+        if(userDTO.getPhoneNumber() != null)
+            user.setPhoneNumber(userDTO.getPhoneNumber());
+        if (userDTO.getAddress() != null)
+            user.setAddress(userDTO.getAddress());
+        userRepository.save(user);
+        return ResponseEntity.ok("User edited");
     }
 }
