@@ -145,6 +145,7 @@ public class ListingService {
     }
 
     public Page<Listing> addFavoriteBoolean(Page<Listing> listings, String email) {
+
         for(Listing listing : listings) {
             listing.setIsFavoriteToCurrentUser(userRepository.findByEmail(email).get().getFavourites().contains(listing));
         }
@@ -185,12 +186,10 @@ public class ListingService {
                 .build();
     }
 
-    public String editListing(Long id, String email, String listingJson) throws JsonProcessingException {
+    public String editListing(Long id, String email, ListingDTO listingDTO) throws JsonProcessingException {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            logger.info("ListingService: editListing: " + listingJson);
-            ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
-            logger.info("ListingService: editListing: " + listingDTO.toString());
+            logger.info("ListingService: editListing: " + listingDTO);
             if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
                 Listing listing = listingRepository.findById(id).get();
                 if(listingDTO.getDescription() != null)
@@ -201,9 +200,9 @@ public class ListingService {
                     listing.setCategory(listingDTO.getCategory());
                 if(listingDTO.getAddress() != null)
                     listing.setAddress(listingDTO.getAddress());
-                if(listingDTO.getLatitude() == 0L)
+                if(listingDTO.getLatitude() != 0L)
                     listing.setLatitude(listingDTO.getLatitude());
-                if(listingDTO.getLongitude() == 0L)
+                if(listingDTO.getLongitude() != 0L)
                     listing.setLongitude(listingDTO.getLongitude());
                 listingRepository.save(listing);
                 return "Listing edited";

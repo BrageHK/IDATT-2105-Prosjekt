@@ -1,11 +1,11 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.model.User;
-import edu.ntnu.idatt2105.backend.request.EditRequest;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import edu.ntnu.idatt2105.backend.service.UserService;
@@ -13,16 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 
 @RestController
 @CrossOrigin("*")
@@ -30,8 +26,8 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ListingController {
 
-    @Autowired
-    private final ListingRepository listingRepository;
+    Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
+
     @Autowired
     private final JWTService jwtService;
     @Autowired
@@ -39,21 +35,30 @@ public class ListingController {
     @Autowired
     private final UserService userService;
 
-    // create listing
+    /**
+     * Create a new listing. The user must be logged in to create a listing. The listing is created
+     * from a JSON string and a list of images. The images are saved to the server and are connected to the listing.
+     *
+     * @param files List of images
+     * @param listingJson JSON string of the listing
+     * @return
+     */
     @PostMapping("/create")
     public ResponseEntity<String> createListing(
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("listing") String listingJson,
-            @RequestHeader("Authorization") String authHeader
+            @RequestParam("listing") String listingJson // TODO: Change to DTO
     ) {
-        String loggedInUserName = userService.getUserFromJTW(authHeader).getEmail();
+        if(!jwtService.isAuthenticated()) {
+            return ResponseEntity.status(401).body("User not authenticated, please log in");
+        }
+        String email = jwtService.getAuthenticatedUserEmail();
 
         String returnMessage;
         Long num;
-        if((num = listingService.addListing(listingJson, files, loggedInUserName)) != null) {
+        if((num = listingService.addListing(listingJson, files, email)) != null) {
             returnMessage = num.toString();
         } else {
-            returnMessage = "Listing not created";
+            returnMessage = "Listing not created, please check you input data";
         }
         return ResponseEntity.ok(returnMessage);
     }
@@ -88,6 +93,7 @@ public class ListingController {
             @RequestBody SearchRequest request,
             @RequestHeader(name = "Authorization", required = false) String authHeader) {
         Page<Listing> page = listingService.searchListing(request);
+        logger.info("AuthHeader: " + authHeader);
         if(authHeader != null)
             page = listingService.addFavoriteBoolean(page, userService.getUserFromJTW(authHeader).getEmail());
         return page;
@@ -103,12 +109,15 @@ public class ListingController {
     public ResponseEntity<String> editListing(
             @PathVariable Long id,
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody EditRequest editRequest
+            @RequestBody ListingDTO listingDTO
     ) throws JsonProcessingException {
         Logger logger = org.slf4j.LoggerFactory.getLogger(ListingController.class);
-        logger.info("Listing: " + "listingJson");
+        logger.info("Listing: " + listingDTO.toString());
+        logger.info("Is authenticated: " + jwtService.isAuthenticated());
+        logger.info("Mail: " + jwtService.getAuthenticatedUserEmail());
+        logger.info("Id: " + jwtService.getAuthenticatedUserId());
         return ResponseEntity.ok(listingService.editListing(id, userService.getUserFromJTW(authHeader).getEmail(),
-                "listingJson"));
+                listingDTO));
     }
 
     @PostMapping("/{id}/edit/addPictures")

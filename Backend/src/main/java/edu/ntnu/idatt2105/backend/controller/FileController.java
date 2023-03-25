@@ -17,6 +17,13 @@ import java.nio.file.Files;
 @RequiredArgsConstructor
 public class FileController {
 
+    /**
+     * Get image from server by id.
+     * @param id id of the listing the image belongs to.
+     * @param id2 id of the image.
+     * @return image as byte array.
+     * @throws IOException if file not found.
+     */
     @GetMapping("/{id}/{id2}")
     public ResponseEntity<byte[]> getFile(@PathVariable Long id, @PathVariable Long id2) throws IOException {
         String filePath = "src/main/resources/images/" + id + "/" + id2;

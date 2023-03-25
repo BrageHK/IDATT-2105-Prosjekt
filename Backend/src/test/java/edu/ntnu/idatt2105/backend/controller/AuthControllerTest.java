@@ -1,9 +1,9 @@
 package edu.ntnu.idatt2105.backend.controller;
 
-import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationRequest;
-import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationResponse;
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
 import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
-import edu.ntnu.idatt2105.backend.security.authentication.RegisterRequest;
+import edu.ntnu.idatt2105.backend.DTO.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
