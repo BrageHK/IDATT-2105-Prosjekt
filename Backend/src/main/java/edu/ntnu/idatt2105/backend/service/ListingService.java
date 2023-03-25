@@ -232,7 +232,8 @@ public class ListingService {
             if(!Objects.requireNonNull(file.getContentType()).contains("image"))
                 return ResponseEntity.status(400).body("At least one file is not an image");
         try {
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
                 for(MultipartFile file : files) {
                     fileStorageService.handleFileUpload(
                             file,
@@ -255,8 +256,10 @@ public class ListingService {
 
     public ResponseEntity<String> removePicture(Long id, Long pictureId) {
         try {
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
-                fileStorageService.deleteFile(id.toString(), pictureId.toString());
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
+                if(!fileStorageService.deleteFile(id.toString(), pictureId.toString()))
+                    return ResponseEntity.status(400).body("Error removing picture from listing");
                 fileStorageService.removeFileGaps(id.toString());
                 Listing listing = listingRepository.findById(id).get();
                 listing.setNumberOfPictures(listing.getNumberOfPictures() - 1);

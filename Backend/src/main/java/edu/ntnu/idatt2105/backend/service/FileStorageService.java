@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -103,6 +104,10 @@ public class FileStorageService {
     public boolean deleteFile(String listingId, String imageIndex) {
         Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
         File file = filePath.toFile();
+        // get the number of files in the fileStorageLocation.resolve(listingId) directory
+        if(Objects.requireNonNull(fileStorageLocation.resolve(listingId).toFile().listFiles()).length < 2) {
+            throw new RuntimeException("Cannot delete last image in listing");
+        }
         if (!file.exists()) {
             throw new RuntimeException("File not found: " + listingId + "/" + imageIndex);
         }
