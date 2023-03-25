@@ -3,16 +3,15 @@ package edu.ntnu.idatt2105.backend.controller;
 import edu.ntnu.idatt2105.backend.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-
+/**
+ * Controller for getting images from the backend.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/images")

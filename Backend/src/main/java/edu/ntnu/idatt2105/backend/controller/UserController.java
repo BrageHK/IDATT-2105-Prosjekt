@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2105.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.ntnu.idatt2105.backend.DTO.EditRequest;
 import edu.ntnu.idatt2105.backend.DTO.PasswordEditRequest;
 import edu.ntnu.idatt2105.backend.DTO.UserDTO;
 import edu.ntnu.idatt2105.backend.Repository.UserRepository;
@@ -14,6 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for user information. The user can get their information and edit their information.
+ * The user can also get their favorite listings and owned listings.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/user")

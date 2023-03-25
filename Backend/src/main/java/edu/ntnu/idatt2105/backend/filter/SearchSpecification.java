@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The specification for filtering a list of objects.
+ * This class is from this website: https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+ *
+ * @param <T> The type of the object to filter.
+ */
 @Slf4j
 @AllArgsConstructor
 public class SearchSpecification<T> implements Specification<T> {

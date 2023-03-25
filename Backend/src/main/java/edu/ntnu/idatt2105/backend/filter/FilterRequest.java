@@ -13,7 +13,10 @@ import java.io.Serializable;
 import java.util.List;
 
 
-//https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+/**
+ * The request body for filtering a list of objects.
+ * This class is from this website: https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+ */
 @Data
 @Builder
 @NoArgsConstructor

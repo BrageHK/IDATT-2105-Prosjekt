@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The request body for changing the password of a user.
+ */
 @Data
 @Builder
 @NoArgsConstructor

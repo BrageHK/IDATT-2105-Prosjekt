@@ -9,6 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for user authentication. The user can register and login.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/auth")

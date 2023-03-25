@@ -1,11 +1,8 @@
 package edu.ntnu.idatt2105.backend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
-import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.model.Listing;
-import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.ListingService;
 import edu.ntnu.idatt2105.backend.service.UserService;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +21,12 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.List;
 
+/**
+ * Controller for listing endpoints.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/listing")

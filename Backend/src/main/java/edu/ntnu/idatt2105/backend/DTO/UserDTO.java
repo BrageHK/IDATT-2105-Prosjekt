@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The request body for editing a user. The user is identified by the id. Also used for transferring user data.
+ */
 @Data
 @Builder
 @NoArgsConstructor
