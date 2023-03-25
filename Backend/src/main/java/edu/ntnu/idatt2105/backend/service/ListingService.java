@@ -195,6 +195,8 @@ public class ListingService {
             logger.info("ListingService: editListing: " + listingDTO);
             if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
                 Listing listing = listingRepository.findById(id).get();
+                if(listingDTO.getPrice() > 0L)
+                    listing.setPrice(listingDTO.getPrice());
                 if(listingDTO.getDescription() != null)
                     listing.setDescription(listingDTO.getDescription());
                 if(listingDTO.getBriefDescription() != null)
