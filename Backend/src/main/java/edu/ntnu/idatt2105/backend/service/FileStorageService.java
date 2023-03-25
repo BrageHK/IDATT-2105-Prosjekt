@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,12 +11,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
 public class FileStorageService {
 
     private final Path fileStorageLocation;
+    Logger logger = org.slf4j.LoggerFactory.getLogger(FileStorageService.class);
 
     public FileStorageService() {
         this.fileStorageLocation = Paths.get("src/main/resources/images").toAbsolutePath().normalize();
@@ -54,7 +57,7 @@ public class FileStorageService {
             return filename;
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to store file " + originalFileName, e);
+            throw new RuntimeException("Failed to store file " + originalFileName + " New filename: " + filename, e);
         }
     }
 
@@ -75,5 +78,46 @@ public class FileStorageService {
         }
         FileUtils.deleteDirectory(folder);
         return true;
+    }
+
+    public boolean deleteFile(String listingId, String imageIndex) {
+        Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
+        File file = filePath.toFile();
+        if (!file.exists()) {
+            throw new RuntimeException("File not found: " + listingId + "/" + imageIndex);
+        }
+        file.delete();
+        return true;
+    }
+
+    /**
+     * Renames all files in a directory to remove gaps in the numbering. For example, if the directory contains files
+     * 0, 2, 3. This method will rename the files to 0, 1, 2. This method is useful when deleting files from a directory
+     * and you want to keep the numbering of the files in the directory.
+     *
+     * @param directoryPath The path to the directory that is to be sorted.
+     */
+    public void removeFileGaps(String directoryPath) {
+        File directory = this.fileStorageLocation.resolve(directoryPath).toFile();
+        File[] files = directory.listFiles();
+        if (files == null) {
+            throw new RuntimeException("Directory not found: " + directoryPath);
+        }
+        Arrays.sort(files);
+        int expectedIndex = 0;
+        for (File file : files) {
+            String fileName = file.getName();
+            int fileIndex = Integer.parseInt(fileName);
+            if (fileIndex != expectedIndex) {
+                String newFileName = Integer.toString(expectedIndex);
+                File newFile = new File(fileStorageLocation.resolve(directoryPath) + File.separator + newFileName);
+                if (file.renameTo(newFile)) {
+                    logger.info("Renamed file " + fileName + " to " + newFileName);
+                } else {
+                    logger.info("Failed to rename file " + fileName);
+                }
+            }
+            expectedIndex++;
+        }
     }
 }

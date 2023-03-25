@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
@@ -7,8 +8,10 @@ import edu.ntnu.idatt2105.backend.Repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -119,6 +123,7 @@ public class ListingService {
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
+                    .isFavoriteToCurrentUser(false)
                     .numberOfPictures(files.size())
                     .dateCreated(java.time.LocalDateTime.now())
                     .build();
@@ -180,7 +185,81 @@ public class ListingService {
                 .build();
     }
 
-    public String editListing(Long id, String email) {
-    return null;
+    public String editListing(Long id, String email, String listingJson) throws JsonProcessingException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            logger.info("ListingService: editListing: " + listingJson);
+            ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
+            logger.info("ListingService: editListing: " + listingDTO.toString());
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                Listing listing = listingRepository.findById(id).get();
+                if(listingDTO.getDescription() != null)
+                    listing.setDescription(listingDTO.getDescription());
+                if(listingDTO.getBriefDescription() != null)
+                    listing.setBriefDescription(listingDTO.getBriefDescription());
+                if(listingDTO.getCategory() != null)
+                    listing.setCategory(listingDTO.getCategory());
+                if(listingDTO.getAddress() != null)
+                    listing.setAddress(listingDTO.getAddress());
+                if(listingDTO.getLatitude() == 0L)
+                    listing.setLatitude(listingDTO.getLatitude());
+                if(listingDTO.getLongitude() == 0L)
+                    listing.setLongitude(listingDTO.getLongitude());
+                listingRepository.save(listing);
+                return "Listing edited";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch(Exception e) {
+            logger.error("Error editing listing: " + e);
+            return "Error editing listing";
+        }
+    }
+
+    public String addPictures(Long id, String email, List<MultipartFile> files) {
+        if(files.isEmpty()) {
+            return "No files selected";
+        }
+        // check if file is image
+        for(MultipartFile file : files)
+            if(!Objects.requireNonNull(file.getContentType()).contains("image"))
+                return "File is not an image";
+
+        try {
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                for(MultipartFile file : files) {
+                    fileStorageService.handleFileUpload(file, id.toString(), Integer.toString(listingRepository.findById(id).get().getNumberOfPictures()));
+                    Listing listing = listingRepository.findById(id).get();
+                    listing.setNumberOfPictures(listing.getNumberOfPictures() + 1);
+                    listingRepository.save(listing);
+                }
+                return "Pictures added";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch (Exception e) {
+            logger.error("Error adding pictures to listing: " + e);
+            return "Error adding pictures to listing";
+        }
+
+    }
+
+    public String removePicture(Long id, Long pictureId, String email) {
+        try {
+            if(listingRepository.findById(id).get().getOwner().getEmail().equals(email)) {
+                fileStorageService.deleteFile(id.toString(), pictureId.toString());
+                fileStorageService.removeFileGaps(id.toString());
+                Listing listing = listingRepository.findById(id).get();
+                listing.setNumberOfPictures(listing.getNumberOfPictures() - 1);
+                listingRepository.save(listing);
+                return "Picture removed";
+            } else {
+                return "You are not the owner of this listing";
+            }
+        } catch (Exception e) {
+            logger.error("Error removing picture from listing: " + e);
+            return "Error removing picture from listing";
+        }
+
     }
 }
