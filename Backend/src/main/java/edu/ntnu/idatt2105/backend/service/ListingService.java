@@ -196,7 +196,8 @@ public class ListingService {
     public ResponseEntity<String> editListing(Long id, ListingDTO listingDTO) {
         try {
             logger.info("ListingService: editListing: " + listingDTO);
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
                 Listing listing = listingRepository.findById(id).get();
                 if(listingDTO.getPrice() > 0L)
                     listing.setPrice(listingDTO.getPrice());

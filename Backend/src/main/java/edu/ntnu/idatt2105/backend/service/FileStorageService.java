@@ -104,7 +104,6 @@ public class FileStorageService {
     public boolean deleteFile(String listingId, String imageIndex) {
         Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
         File file = filePath.toFile();
-        // get the number of files in the fileStorageLocation.resolve(listingId) directory
         if(Objects.requireNonNull(fileStorageLocation.resolve(listingId).toFile().listFiles()).length < 2) {
             throw new RuntimeException("Cannot delete last image in listing");
         }
@@ -117,8 +116,8 @@ public class FileStorageService {
 
     /**
      * Renames all files in a directory to remove gaps in the numbering. For example, if the directory contains files
-     * 0, 2, 3. This method will rename the files to 0, 1, 2. This method is useful when deleting files from a directory
-     * and you want to keep the numbering of the files in the directory.
+     * 0, 2, 3. This method will rename the files to 0, 1, 2. This method is useful when deleting files from a
+     * directory, and you want to keep the numbering of the files in the directory.
      *
      * @param directoryPath The path to the directory that is to be sorted.
      */
