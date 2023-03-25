@@ -3,7 +3,7 @@ package edu.ntnu.idatt2105.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ntnu.idatt2105.backend.DTO.PasswordEditRequest;
 import edu.ntnu.idatt2105.backend.DTO.UserDTO;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.UserService;

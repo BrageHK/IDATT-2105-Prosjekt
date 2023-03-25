@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.DTO.UserDTO;
-import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.ListingRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.security.JWTService;
@@ -60,7 +60,7 @@ public class UserService {
         List<Listing> favourites = user.getFavourites();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: favourites) {
-            listingDTOS.add(listingService.convertToListingDTO(listing, true));
+            listingDTOS.add(listingService.convertToListingDTO(listing));
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -118,7 +118,7 @@ public class UserService {
         List<Listing> listings = user.getListings();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: listings) {
-            listingDTOS.add(listingService.convertToListingDTO(listing, user.getFavourites().contains(listing)));
+            listingDTOS.add(listingService.convertToListingDTO(listing));
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {

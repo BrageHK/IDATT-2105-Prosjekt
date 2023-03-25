@@ -16,9 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -57,7 +54,7 @@ public class ListingController {
     public ResponseEntity<String> createListing(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("listing") String listingJson // TODO: Change to DTO?
-    ) throws UnknownHostException {
+    ) {
         if(!jwtService.isAuthenticated()) {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
@@ -65,8 +62,7 @@ public class ListingController {
 
         Long num;
         if((num = listingService.addListing(listingJson, files, email)) != null) {
-            return ResponseEntity.created(URI.create(InetAddress.getLocalHost().getHostAddress()+"api/listing/"+num))
-                    .body("Listing created with id: " + num);
+            return ResponseEntity.ok(num.toString());
         } else {
             return ResponseEntity.badRequest().body("Listing not created");
         }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class WebSocketController {
-
+/*
     @Autowired
     private ConversationService conversationService;
 
@@ -16,5 +16,5 @@ public class WebSocketController {
         // You can customize this method to handle the message as needed.
         // For example, you can save the message to the database or process it in some other way.
         //conversationService.getOrCreateConversation("/topic/messages", message);
-    }
+    }*/
 }

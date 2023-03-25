@@ -2,8 +2,8 @@ package edu.ntnu.idatt2105.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
-import edu.ntnu.idatt2105.backend.Repository.ListingRepository;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.ListingRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
@@ -67,16 +67,16 @@ public class ListingService {
         String json;
         if(jwtService.isAuthenticated()) {
             try {
-                json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get(),
-                        userRepository.findByEmail(jwtService.getAuthenticatedUserEmail())
-                                .get().getFavourites().contains(listingRepository.findById(id).get())));
+                json = mapper.writeValueAsString(
+                        convertToListingDTO(listingRepository.findById(id).get())
+                );
             } catch (Exception e) {
                 logger.error("Error converting listing to json: " + e);
                 return ResponseEntity.badRequest().body("Error converting listing to json: " + e);
             }
         } else {
             try {
-                json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get(), false));
+                json = mapper.writeValueAsString(convertToListingDTO(listingRepository.findById(id).get()));
             } catch (Exception e) {
                 logger.error("Error converting listing to json: " + e);
                 return ResponseEntity.badRequest().body("Error converting listing to json: " + e);
@@ -133,6 +133,7 @@ public class ListingService {
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(email).get())
                     .isSold(false)
+                    .isCurrentUserOwner(false)
                     .isFavoriteToCurrentUser(false)
                     .numberOfPictures(files.size())
                     .dateCreated(java.time.LocalDateTime.now())
@@ -163,7 +164,15 @@ public class ListingService {
         return listings;
     }
 
-    public ListingDTO convertToListingDTO(Listing listing, Boolean isFavoriteToCurrentUser) {
+    public ListingDTO convertToListingDTO(Listing listing) {
+        boolean isFavoriteToCurrentUser = false;
+        boolean isCurrentUserOwner = false;
+        if(jwtService.isAuthenticated())
+            isCurrentUserOwner = listing.getOwner().getEmail().equals(jwtService.getAuthenticatedUserEmail());
+        if(jwtService.isAuthenticated())
+            isFavoriteToCurrentUser = userRepository.findByEmail(jwtService.getAuthenticatedUserEmail())
+                    .get().getFavourites().contains(listing);
+
         return ListingDTO.builder()
                 .id(listing.getId())
                 .description(listing.getDescription())
@@ -177,29 +186,12 @@ public class ListingService {
                 .numberOfPictures(listing.getNumberOfPictures())
                 .ownerId(listing.getOwner().getId())
                 .isFavoriteToCurrentUser(isFavoriteToCurrentUser)
-                .build();
-    }
-
-    public ListingDTO convertToListingDTO(Listing listing) {
-        return ListingDTO.builder()
-                .id(listing.getId())
-                .description(listing.getDescription())
-                .briefDescription(listing.getBriefDescription())
-                .category(listing.getCategory())
-                .address(listing.getAddress())
-                .latitude(listing.getLatitude())
-                .longitude(listing.getLongitude())
-                .isSold(listing.getIsSold())
-                .price(listing.getPrice())
-                .numberOfPictures(listing.getNumberOfPictures())
-                .ownerId(listing.getOwner().getId())
-                .isFavoriteToCurrentUser(false)
+                .isCurrentUserOwner(isCurrentUserOwner)
                 .build();
     }
 
     public ResponseEntity<String> editListing(Long id, ListingDTO listingDTO) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
             logger.info("ListingService: editListing: " + listingDTO);
             if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
                 Listing listing = listingRepository.findById(id).get();

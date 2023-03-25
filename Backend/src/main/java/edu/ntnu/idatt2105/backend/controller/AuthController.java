@@ -2,7 +2,7 @@ package edu.ntnu.idatt2105.backend.controller;
 
 import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
 import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
-import edu.ntnu.idatt2105.backend.security.authentication.AuthenticationService;
+import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.DTO.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

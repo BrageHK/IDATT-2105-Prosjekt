@@ -1,6 +1,6 @@
 package edu.ntnu.idatt2105.backend.security;
 
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

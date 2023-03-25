@@ -1,14 +1,12 @@
-package edu.ntnu.idatt2105.backend.security.authentication;
+package edu.ntnu.idatt2105.backend.security;
 
 import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
 import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
 import edu.ntnu.idatt2105.backend.DTO.RegisterRequest;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
-import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

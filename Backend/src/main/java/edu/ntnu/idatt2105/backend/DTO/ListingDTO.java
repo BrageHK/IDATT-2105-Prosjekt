@@ -24,7 +24,9 @@ public class ListingDTO {
     private Boolean isSold;
     private double price;
     private int numberOfPictures;
+    // These two fields are to make frontend development easier.
     private Boolean isFavoriteToCurrentUser;
+    private Boolean isCurrentUserOwner;
 
     private Long ownerId;
 }
