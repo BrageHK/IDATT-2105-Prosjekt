@@ -179,7 +179,7 @@ public class ListingController {
      */
     @Operation(summary = "Remove a picture from a listing", description = "The user must be logged in to remove a " +
             "picture from a listing. The user must be the owner of the listing to remove a picture.")
-    @PutMapping("/{id}/edit/removePicture/{pictureId}")
+    @DeleteMapping("/{id}/edit/removePicture/{pictureId}")
     public ResponseEntity<String> removePicture(
             @PathVariable Long id,
             @PathVariable Long pictureId

@@ -7,6 +7,7 @@ import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
+import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ public class ListingService {
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final JWTService jwtService;
+    private final AuthenticationService authenticationService;
 
     public Page<Listing> searchListing(SearchRequest request) {
         SearchSpecification<Listing> specification = new SearchSpecification<>(request);
@@ -42,7 +44,8 @@ public class ListingService {
     public boolean deleteListing(long id) throws IllegalArgumentException {
         AtomicBoolean deleted = new AtomicBoolean(false);
         listingRepository.findById(id).ifPresent(listing -> {
-            if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+                    || authenticationService.isAdmin()) {
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));

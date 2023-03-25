@@ -1,5 +1,6 @@
 package edu.ntnu.idatt2105.backend.security;
 
+import edu.ntnu.idatt2105.backend.enums.Role;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import io.jsonwebtoken.Claims;

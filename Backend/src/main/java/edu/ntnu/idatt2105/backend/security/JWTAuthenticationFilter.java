@@ -51,7 +51,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        logger.info("User " + userEmail + " authenticated.");
+        logger.info("User " + userEmail + " authenticated with priveleges: "
+                + SecurityContextHolder.getContext().getAuthentication().getAuthorities() + ".");
         filterChain.doFilter(request, response);
 
     }
