@@ -62,7 +62,7 @@ The docker container should now be visible in Docker Desktop. The `MySQL-Server/
 ### Backend setup
 
 ```sh
-cd Backend
+cd MySQL-Server
 mvn spring-boot:run
 ```
 
