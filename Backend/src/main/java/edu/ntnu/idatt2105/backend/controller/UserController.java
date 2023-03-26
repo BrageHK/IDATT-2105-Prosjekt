@@ -5,6 +5,7 @@ import edu.ntnu.idatt2105.backend.DTO.PasswordEditRequest;
 import edu.ntnu.idatt2105.backend.DTO.UserDTO;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
+import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import edu.ntnu.idatt2105.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final AuthenticationService authenticationService;
 
     /**
      * Gets the logged-in user from JWT token.
@@ -130,6 +134,18 @@ public class UserController {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
         return jwtService.updatePassword(passwordEditRequest.getOldPassword(), passwordEditRequest.getNewPassword());
+    }
+
+    /**
+     * Gets the admin status of the current user. Uses the JWT authentication token to check the user.
+     *
+     * @return True if user is admin, false otherwise.
+     */
+    @Operation(summary = "Gets the admin status of the current user", description = "Uses the JWT authentication" +
+            " token to check the user. Returns true if user is admin, false otherwise.")
+    @GetMapping("/getUser/isAdmin")
+    public ResponseEntity<Boolean> isUserAdmin() {
+        return ResponseEntity.ok(authenticationService.isAdmin());
     }
 
 }
