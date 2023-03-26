@@ -52,7 +52,7 @@ git clone git@gitlab.stud.idi.ntnu.no:bragehk/NettProggProsjekt.git
 [Docker] is required to run the database. After installing docker, run these commands from the starting folder:
 
 ```sh
-cd Backend
+cd MySQL-Server
 docker build -t mysql-image .
 docker run --name mysql-container -p 3306:3306 -d mysql-image
 ```
@@ -62,7 +62,7 @@ The docker container should now be visible in Docker Desktop. The `MySQL-Server/
 ### Backend setup
 
 ```sh
-cd MySQL-Server
+cd Backend
 mvn spring-boot:run
 ```
 
