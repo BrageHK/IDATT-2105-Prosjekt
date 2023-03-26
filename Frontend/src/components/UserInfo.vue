@@ -2,29 +2,31 @@
 	<div class="user-info">
 		<h2>{{ $t('userInfo') }}</h2>
 		<div v-if="user" class="form">
-			<div class="form-group">
-				<label for="first-name">{{ $t('firstName') }}:</label>
-				<input id="first-name" v-model="user.firstName" />
-			</div>
-			<div class="form-group">
-				<label for="last-name">{{ $t('lastName') }}:</label>
-				<input id="last-name" v-model="user.lastName" />
-			</div>
-			<div class="form-group">
-				<label for="email">{{ $t('email') }}:</label>
-				<input id="email" v-model="user.email" />
-			</div>
-			<div class="form-group">
-				<label for="phone">{{ $t('phone') }}:</label>
-				<input id="phone" v-model="user.phoneNumber" />
-			</div>
-			<div class="form-group">
-				<label for="address">{{ $t('address') }}:</label>
-				<input id="address" v-model="user.address" />
-			</div>
-			<div class="form-group">
-				<button @click="saveUser">{{ $t('save') }}</button>
-			</div>
+			<form @submit.prevent="saveUser">
+				<div class="form-group">
+					<label for="first-name">{{ $t('firstName') }}:</label>
+					<input id="first-name" v-model="user.firstName" />
+				</div>
+				<div class="form-group">
+					<label for="last-name">{{ $t('lastName') }}:</label>
+					<input id="last-name" v-model="user.lastName" />
+				</div>
+				<div class="form-group">
+					<label for="email">{{ $t('email') }}:</label>
+					<input id="email" type="email" v-model="user.email" required />
+				</div>
+				<div class="form-group">
+					<label for="phone">{{ $t('phone') }}:</label>
+					<input id="phone" type="number" v-model="user.phoneNumber" />
+				</div>
+				<div class="form-group">
+					<label for="address">{{ $t('address') }}:</label>
+					<input id="address" v-model="user.address" />
+				</div>
+				<div class="form-group">
+					<button type="submit">{{ $t('save') }}</button>
+				</div>
+			</form>
 		</div>
 		<div v-else>
 			<p>{{ $t('loadUserInfo') }}</p>
@@ -34,7 +36,7 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { useGlobalState } from '@/globalState';
+import { getIp } from '@/globalState';
 export default {
 	data() {
 		return {
@@ -48,7 +50,7 @@ export default {
 		};
 	},
 	setup() {
-		const { serverIP } = useGlobalState();
+		const { serverIP } = getIp();
 		return {
 			serverIP,
 		};
@@ -72,7 +74,19 @@ export default {
 				console.log(error);
 			}
 		},
-		async saveUser() {},
+		async saveUser() {
+			try {
+				const token = localStorage.getItem('authToken');
+				const response = await axios.put(this.serverIP + '/api/user/editUser', this.user, {
+					headers: {
+						'Authorization': `Bearer ${token}`,
+					},
+				});
+				alert(response.data);
+			} catch (error) {
+				console.log(error);
+			}
+		},
 	},
 };
 </script>

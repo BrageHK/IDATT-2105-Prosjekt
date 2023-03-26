@@ -11,7 +11,7 @@
 import heartFilled from '@/assets/images/heartFilled.svg'
 import heartOutline from '@/assets/images/heartOutline.svg'
 import router from '../router'
-import { useGlobalState } from '@/globalState'
+import { getIp } from '@/globalState'
 import axios from 'axios'
 
 export default {
@@ -23,33 +23,61 @@ export default {
 		isFavorited: { type: Boolean, required: true }
 	},
 	setup() {
-		const { serverIP } = useGlobalState()
+		const { serverIP } = getIp()
 		return { serverIP }
 	},
-	data() {
-		const image = `${this.serverIP}/api/images/${this.id}/0`
+	data()
+		{
+		const timestamp = Date.now()
+		const image = `${this.serverIP}/api/images/${this.id}/0?t=${timestamp}`
 		const isFavorite = this.isFavorited
 		const favoriteIcon = isFavorite ? heartFilled : heartOutline
-		const favoriteIconFilled = heartFilled
-		return { image, isFavorite, favoriteIcon, favoriteIconFilled }
+		return { image, isFavorite, favoriteIcon }
 	},
 	methods: {
 		handleClick() {
 			router.push(`/listing/${this.id}`)
 		},
+		async removeFavorite() {
+			try {
+				const token = localStorage.getItem("authToken");
+				const response = await axios.delete(this.serverIP + "/api/listing/" + this.id + "/removeFavorite", {
+				headers: {
+					"Authorization": `Bearer ${token}`,
+				},
+				});
+				this.isFavorite = false;
+				this.favoriteIcon = heartOutline
+				console.log(response);
+			} catch (error) {
+				console.error("Error removing favorite:", error);
+			}
+		},
+		async addFavorite() {
+			try {
+				const token = localStorage.getItem("authToken");
+				const response = await axios.post(this.serverIP + "/api/listing/" + this.id + "/addFavorite", null, {
+				headers: {
+					"Authorization": `Bearer ${token}`,
+				},
+				});
+				this.isFavorite = true;
+				this.favoriteIcon = heartFilled
+				console.log(response);
+			} catch (error) {
+				console.error("Error adding favorite:", error);
+			}
+		},
+		
 		toggleFavorite() {
+			console.log('toggle favorite')
 			const token = localStorage.getItem('authToken')
 			if (!token) {
 				router.push('/login')
 				return
 			}
-			const action = this.isFavorite ? 'removeFavorite' : 'addFavorite'
-			axios.get(`${this.serverIP}/api/listing/${this.id}/${action}`, { headers: { 'Authorization': `Bearer ${token}` } })
-				.then(() => {
-					this.isFavorite = !this.isFavorite
-					this.favoriteIcon = this.isFavorite ? this.favoriteIconFilled : heartOutline
-				})
-				.catch(console.error)
+			this.isFavorite ? this.removeFavorite(): this.addFavorite();
+			
 		}
 	}
 }

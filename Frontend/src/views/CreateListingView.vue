@@ -4,12 +4,12 @@
 		<form @submit.prevent="submitForm">
 			<div class="listing-details">
 				<div>
-					<label for="name">{{ $t('name') }}:</label>
+					<label for="name">{{ $t('briefDescription') }}:</label>
 					<input type="text" id="name" v-model="listingData.briefDescription" required />
 				</div>
 				<div>
 					<label for="price">{{ $t('price') }}:</label>
-					<input type="number" id="price" v-model="listingData.price" required />
+					<input type="number" id="price" v-model="listingData.price" step="any" required />
 				</div>
 				<div>
 					<label for="image">{{ $t('image') }}:</label>
@@ -24,7 +24,12 @@
 				</div>
 				<div>
 					<label for="category">{{ $t('category') }}:</label>
-					<input type="text" id="category" v-model="listingData.category" required />
+					<select v-model="listingData.category" required >
+        			<option disabled value="">{{ $t('selectCategory') }}</option>
+        			<option v-for="category in categories" :key="category" :value="category">
+		  			{{ $t(category) }}
+					</option>		
+					</select>
 				</div>
 				<div>
 					<label for="address">{{ $t('address') }}:</label>
@@ -46,7 +51,7 @@
 
 <script lang="ts">
 	import axios from 'axios';
-	import { useGlobalState } from '@/globalState';
+	import { getIp, getCategories } from '@/globalState';
 	import router from '@/router';
 
 	export default {
@@ -67,25 +72,22 @@
 			};
 		},
 		setup() {
-			const { serverIP } = useGlobalState();
+			const { serverIP } = getIp();
+			const { categories } = getCategories();
+
 			return {
 				serverIP,
+				categories,
 			};
 		},
 		methods: {
 			onImageChange(event: Event) {
 				const target = event.target as HTMLInputElement;
 				if (!target.files) return;
-
 				this.files = Array.from(target.files);
 				this.imagePreviews = this.files.map(file => URL.createObjectURL(file));
 			},
 			async submitForm() {
-				console.log(this.files.length)
-				if (this.files.length === 0) {
-					alert('Please upload at least one image.');
-					return;
-				}
 				try {
 
 					const formData = new FormData();

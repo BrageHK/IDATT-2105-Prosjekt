@@ -33,7 +33,7 @@
 
 <script lang="ts">
 	import axios from 'axios';
-	import { useGlobalState } from '@/globalState';
+	import { getIp } from '@/globalState';
 
 	export default {
 		data() {
@@ -47,7 +47,7 @@
 			};
 		},
 		setup() {
-			const { serverIP } = useGlobalState();
+			const { serverIP } = getIp();
 			return {
 				serverIP,
 			};

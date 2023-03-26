@@ -9,6 +9,7 @@
 		</nav>
 		<div v-if="selectedOption === 'user-info'">
 			<user-info />
+			<password-change-form/>
 		</div>
 		<div v-else-if="selectedOption === 'my-listings'">
 			<listing-card-grid :Listings="owned"/>
@@ -23,13 +24,15 @@
 <script lang="ts">
 import UserInfo from '@/components/UserInfo.vue';
 import ListingCardGrid from '@/components/Listingcardgrid.vue';
-import { useGlobalState } from '@/globalState';
+import { getIp } from '@/globalState';
 import axios from 'axios';
+import PasswordChangeForm from '@/components/PasswordChangeForm.vue';
 
 export default {
 	components: {
 		ListingCardGrid,
-		UserInfo
+		UserInfo,
+		PasswordChangeForm
 	},
 	data() {
 		return {
@@ -39,7 +42,7 @@ export default {
 		};
 	},
 	setup() {
-		const { serverIP } = useGlobalState();
+		const { serverIP } = getIp();
 		return {
 			serverIP,
 		};

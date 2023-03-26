@@ -4,6 +4,7 @@ import ListingView from '../views/ListingView.vue';
 import LoginView from '../views/LoginView.vue';
 import CreateListingView from '../views/CreateListingView.vue';
 import UserviewVue from '@/views/Userview.vue';
+import EditListingView from '@/views/EditListingView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +16,7 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'about',
+      name: 'login',
       component: LoginView
     },
     {
@@ -27,6 +28,12 @@ const router = createRouter({
       path: '/create-listing',
       name: 'create-listing',
       component: CreateListingView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/listing/:id/edit',
+      name: 'edit-listing',
+      component: EditListingView,
       meta: { requiresAuth: true }
     },
     {

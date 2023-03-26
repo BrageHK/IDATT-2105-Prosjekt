@@ -4,6 +4,7 @@
             <button @click="previousImage">&lt;</button>
             <img v-bind:src="image" alt="" />
             <button @click="nextImage">></button>
+			<h1>{{ (currentImageIndex+1) + "/" + numberOfPictures }}</h1>
         </div>
         <div class="listing-details">
             <h2>{{ briefDescription }}</h2>
@@ -12,6 +13,8 @@
             <div class="listing-actions">
                 <button @click="">{{ $t('contactSeller') }}</button>
                 <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon"/>
+                <button v-if="isowner" @click="editListing">{{ $t('editListing') }}</button>
+                <button v-if="isowner" @click="deleteListing">{{ $t('delete') }}</button>
             </div>
             <p>{{ description }}</p>
             <p>{{ $t('address') }}: {{ address }}</p>
@@ -25,29 +28,31 @@
 import axios from 'axios';
 import heartFilled from '@/assets/images/heartFilled.svg';
 import heartOutline from '@/assets/images/heartOutline.svg';
-import { useGlobalState } from '@/globalState';
+import { getIp } from '@/globalState';
 import router from '@/router';
 
 export default {
     name: 'ListingView',
     setup() {
-        const { serverIP } = useGlobalState();
+        const { serverIP } = getIp();
         return {
             serverIP,
         };
     },
     data() {
+		const timestamp = Date.now();
         return {
             id: this.$route.params.id,
             briefDescription: '',
             price: '',
             numberOfPictures: 1,
-            image: this.serverIP + '/api/images/' + this.$route.params.id + '/0',
+            image: `${this.serverIP}/api/images/${this.$route.params.id}/0?t=${timestamp}`,
             description: '',
             category: '',
             address: '',
             latitude: '',
             longitude: '',
+            isowner: false,
             currentImageIndex: 0,
             isFavorite: false,
             favoriteIcon: heartOutline,
@@ -55,42 +60,57 @@ export default {
         };
     },
     methods: {
-        toggleFavorite() {
-            const token = localStorage.getItem('authToken');
+        async removeFavorite() {
+			try {
+				const token = localStorage.getItem("authToken");
+				const response = await axios.delete(this.serverIP + "/api/listing/" + this.id + "/removeFavorite", {
+				headers: {
+					"Authorization": `Bearer ${token}`,
+				},
+				});
+				this.isFavorite = false;
+				this.favoriteIcon = heartOutline
+				console.log(response);
+			} catch (error) {
+				console.error("Error removing favorite:", error);
+			}
+		},
+		async addFavorite() {
+			try {
+				const token = localStorage.getItem("authToken");
+				const response = await axios.post(this.serverIP + "/api/listing/" + this.id + "/addFavorite", null, {
+				headers: {
+					"Authorization": `Bearer ${token}`,
+				},
+				});
+				this.isFavorite = true;
+				this.favoriteIcon = heartFilled
+				console.log(response);
+			} catch (error) {
+				console.error("Error adding favorite:", error);
+			}
+		},
+		
+		toggleFavorite() {
+			console.log('toggle favorite')
+			const token = localStorage.getItem('authToken')
+			if (!token) {
+				router.push('/login')
+				return
+			}
+			this.isFavorite ? this.removeFavorite(): this.addFavorite();
+			
+		},
 
-            let action;
-
-            if (this.isFavorite) {
-                action = 'removeFavorite'
-            } else {
-                action = 'addFavorite'
-            }
-            if (!token) {
-                router.push('/login');
-            }
-
-            axios
-                .get(this.serverIP + '/api/listing/' + this.id + '/' + action, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                })
-                .then((response) => {
-                    this.isFavorite = !this.isFavorite;
-                    this.favoriteIcon = this.isFavorite ? this.favoriteIconFilled : heartOutline;
-                    console.log(this.isFavorite);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        },
         nextImage() {
             if (this.currentImageIndex < this.numberOfPictures - 1) {
                 this.currentImageIndex += 1;
             } else {
                 this.currentImageIndex = 0;
             }
-            this.image = this.serverIP + '/api/images/' + this.id + '/' + this.currentImageIndex;
+            const timestamp = Date.now();
+        	this.image = `${this.serverIP}/api/images/${this.id}/${this.currentImageIndex}?t=${timestamp}`;
+        	console.log(this.currentImageIndex);
             console.log(this.currentImageIndex);
         },
         previousImage() {
@@ -99,8 +119,29 @@ export default {
             } else {
                 this.currentImageIndex = this.numberOfPictures - 1;
             }
-            this.image = this.serverIP + '/api/images/' + this.id + '/' + this.currentImageIndex;
+            const timestamp = Date.now();
+        	this.image = `${this.serverIP}/api/images/${this.id}/${this.currentImageIndex}?t=${timestamp}`;
+        	console.log(this.currentImageIndex);
             console.log(this.currentImageIndex);
+        },
+
+        async editListing() {
+            router.push(`/listing/${this.id}/edit`);
+        },
+        async deleteListing() {
+            if (confirm("Are you sure you want to delete this listing?")) {
+                const token = localStorage.getItem('authToken');
+                try {
+                    await axios.delete(`${this.serverIP}/api/listing/${this.id}/delete`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        },
+                    });
+                    router.push('/');
+                } catch (error) {
+                    console.error("Error deleting listing:", error);
+                }
+            }
         },
     },
     created() {
@@ -130,6 +171,7 @@ export default {
                 this.latitude = response.data.latitude;
                 this.longitude = response.data.longitude;
                 this.isFavorite = response.data.isFavoriteToCurrentUser;
+                this.isowner = response.data.isCurrentUserOwner;
                 if (this.isFavorite) {
                     this.favoriteIcon = this.favoriteIconFilled;
                 }
