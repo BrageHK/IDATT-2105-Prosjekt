@@ -24,6 +24,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalStateException("Email already taken");
+        }
+        if(!isAdmin() && request.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("Only admins can create admins");
+        }
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())

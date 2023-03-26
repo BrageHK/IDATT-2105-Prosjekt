@@ -58,10 +58,9 @@ public class ListingController {
         if(!jwtService.isAuthenticated()) {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
-        String email = jwtService.getAuthenticatedUserEmail();
 
         Long num;
-        if((num = listingService.addListing(listingJson, files, email)) != null) {
+        if((num = listingService.addListing(listingJson, files)) != null) {
             return ResponseEntity.ok(num.toString());
         } else {
             return ResponseEntity.badRequest().body("Listing not created");

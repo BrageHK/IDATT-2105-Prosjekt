@@ -119,7 +119,7 @@ public class ListingService {
         return json;
     }
 
-    public Long addListing(String listingJson, List<MultipartFile> files, String email) {
+    public Long addListing(String listingJson, List<MultipartFile> files) {
         try {
             FileStorageService fileStorageService = new FileStorageService();
 
@@ -134,7 +134,7 @@ public class ListingService {
                     .latitude(listingDTO.getLatitude())
                     .longitude(listingDTO.getLongitude())
                     .price(listingDTO.getPrice())
-                    .owner(userRepository.findByEmail(email).get())
+                    .owner(userRepository.findByEmail(jwtService.getAuthenticatedUserEmail()).get())
                     .isSold(false)
                     .isCurrentUserOwner(false)
                     .isFavoriteToCurrentUser(false)

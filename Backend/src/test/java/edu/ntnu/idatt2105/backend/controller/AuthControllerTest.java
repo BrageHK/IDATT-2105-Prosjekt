@@ -32,8 +32,8 @@ class AuthControllerTest {
     @BeforeEach
     public void setUp() {
         authenticationRequest = new AuthenticationRequest("user@example.com", "password123");
-        registerRequest = new RegisterRequest("John", "Doe", "exampl@gmail.com",
-                "password123", "address", 12345678L);
+        //registerRequest = new RegisterRequest("John", "Doe", "exampl@gmail.com",
+               // "password123", "address", 12345678L);
         authenticationResponse = new AuthenticationResponse("sample_token");
     }
 
