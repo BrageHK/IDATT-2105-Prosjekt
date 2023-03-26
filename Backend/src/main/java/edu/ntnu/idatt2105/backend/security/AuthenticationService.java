@@ -1,15 +1,18 @@
-package edu.ntnu.idatt2105.backend.security.authentication;
+package edu.ntnu.idatt2105.backend.security;
 
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
+import edu.ntnu.idatt2105.backend.DTO.RegisterRequest;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
-import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,10 +22,7 @@ public class AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthenticationService.class);
-
     public AuthenticationResponse register(RegisterRequest request) {
-        logger.info("Registering user with email: " + request.getEmail());
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -39,8 +39,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        logger.info("Authenticating user with email: " + request.getEmail());
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws NoSuchElementException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),

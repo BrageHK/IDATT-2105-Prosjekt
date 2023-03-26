@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The different operators a field can have.
+ * This class is from this website: https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+ */
 @Slf4j
 public enum Operator {
 

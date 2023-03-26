@@ -14,6 +14,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class that represents a listing in the database. A listing is an object that is for sale.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -59,6 +65,8 @@ public class Listing implements Serializable {
     private LocalDateTime dateCreated;
     @Column(name = "isFavoriteToCurrentUser")
     private Boolean isFavoriteToCurrentUser;
+    @Column(name = "isCurrentUserOwner")
+    private Boolean isCurrentUserOwner;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "favourites", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

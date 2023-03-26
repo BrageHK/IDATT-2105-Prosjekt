@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.Repository;
+package edu.ntnu.idatt2105.backend.repository;
 
 import edu.ntnu.idatt2105.backend.model.Conversation;
 import edu.ntnu.idatt2105.backend.model.User;

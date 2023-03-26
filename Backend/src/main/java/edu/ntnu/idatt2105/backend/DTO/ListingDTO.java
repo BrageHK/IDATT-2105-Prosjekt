@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
+/**
+ * The request body for authenticating a listing. Also used for transferring user information.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,7 +24,9 @@ public class ListingDTO {
     private Boolean isSold;
     private double price;
     private int numberOfPictures;
+    // These two fields are to make frontend development easier.
     private Boolean isFavoriteToCurrentUser;
+    private Boolean isCurrentUserOwner;
 
     private Long ownerId;
 }
