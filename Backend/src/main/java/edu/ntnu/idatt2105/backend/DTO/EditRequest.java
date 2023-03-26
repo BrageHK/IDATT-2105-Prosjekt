@@ -1,4 +1,4 @@
-package edu.ntnu.idatt2105.backend.request;
+package edu.ntnu.idatt2105.backend.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

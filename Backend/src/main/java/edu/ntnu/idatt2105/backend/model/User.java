@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The class that represents a user in the database.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor

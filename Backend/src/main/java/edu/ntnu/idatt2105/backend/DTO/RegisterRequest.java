@@ -1,10 +1,13 @@
-package edu.ntnu.idatt2105.backend.security.authentication;
+package edu.ntnu.idatt2105.backend.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The request body for registering a user.
+ */
 @Data
 @Builder
 @AllArgsConstructor

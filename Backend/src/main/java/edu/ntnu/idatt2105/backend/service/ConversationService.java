@@ -1,8 +1,8 @@
 package edu.ntnu.idatt2105.backend.service;
 
-import edu.ntnu.idatt2105.backend.Repository.ConversationRepository;
-import edu.ntnu.idatt2105.backend.Repository.MessageRepository;
-import edu.ntnu.idatt2105.backend.Repository.UserRepository;
+import edu.ntnu.idatt2105.backend.repository.ConversationRepository;
+import edu.ntnu.idatt2105.backend.repository.MessageRepository;
+import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.exception.ConversationNotFoundException;
 import edu.ntnu.idatt2105.backend.exception.UserNotFoundException;
 import edu.ntnu.idatt2105.backend.model.Conversation;

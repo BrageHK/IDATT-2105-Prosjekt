@@ -3,6 +3,9 @@ package edu.ntnu.idatt2105.backend.service;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,6 +71,23 @@ public class FileStorageService {
             throw new RuntimeException("File not found: " + fileName);
         }
         return file;
+    }
+
+    public ResponseEntity<byte[]> getImageInListing(String listingId, String imageIndex) {
+        Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
+        File file = filePath.toFile();
+        if (!file.exists()) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            byte[] fileContent = Files.readAllBytes(file.toPath());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+file.getName()+"\"")
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(fileContent);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     public boolean deleteFolder(String folderName) throws IOException {
