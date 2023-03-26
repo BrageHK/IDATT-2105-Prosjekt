@@ -10,6 +10,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * The configuration for the security. This class is used to configure the security filter chain. It uses the
+ * JWTAuthenticationFilter and the AuthenticationProvider to configure the security filter chain.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -18,6 +25,13 @@ public class SecurityConfig {
     private final JWTAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    /**
+     * This method is used to configure the security filter chain.
+     *
+     * @param http The http security.
+     * @return The security filter chain.
+     * @throws Exception If the security filter chain cannot be created.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 

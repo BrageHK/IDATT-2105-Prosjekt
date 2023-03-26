@@ -8,6 +8,7 @@ import edu.ntnu.idatt2105.backend.repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.model.User;
+import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,16 @@ public class UserService {
     @Autowired
     private ListingService listingService;
 
-    public User getUserFromJTW(String authHeader) {
-        String jwt = authHeader.substring(7);
-        return userRepository.findByEmail(jwtService.extractUsername(jwt)).get();
+    @Autowired
+    private AuthenticationService authenticationService;
 
-    }
-
+    /**
+     * Returns a json string of the authenticated user. The user's password is not included in the json string.
+     *
+     * @param user the authenticated user
+     * @return a json string of the authenticated user
+     * @throws JsonProcessingException if the user cannot be converted to json
+     */
     public String userToJson(User user) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -46,6 +51,12 @@ public class UserService {
         return json;
     }
 
+    /**
+     * Converts a user to a userDTO. The userDTO does not contain the user's password.
+     *
+     * @param user the user to be converted
+     * @return a userDTO
+     */
     public UserDTO userToDTO(User user) {
         return UserDTO.builder()
                 .firstName(user.getFirstName())
@@ -56,7 +67,14 @@ public class UserService {
                 .build();
     }
 
+    /**
+     * Returns a json string of the authenticated user's favourite listings.
+     *
+     * @param user the authenticated user
+     * @return a json string of the authenticated user's favourite listings
+     */
     public String getFavoritesToJson(User user) {
+
         List<Listing> favourites = user.getFavourites();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: favourites) {
@@ -71,6 +89,14 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Adds a listing to the authenticated user's favourites. Returns a bad request if the listing is already in the
+     * user's favourites. Returns a bad request if the listing does not exist. Returns a bad request if the user does
+     * not exist. Returns ok if the listing was added to the user's favourites.
+     *
+     * @param listingId the id of the listing to be added to the user's favourites
+     * @return a response entity with the appropriate status code and message
+     */
     public ResponseEntity<String> addFavorite(Long listingId) {
         try {
             User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
@@ -114,7 +140,17 @@ public class UserService {
         }
     }
 
+    /**
+     * Returns a list of the authenticated user's owned listings as a JSON string. Returns null if the user does not
+     * exist. Returns null if the user has no owned listings.
+     *
+     * @param user the authenticated user
+     * @return a JSON string containing the user's owned listings
+     */
     public String getListingsToJson(User user) {
+        if(user == null) {
+            return null;
+        }
         List<Listing> listings = user.getListings();
         List<ListingDTO> listingDTOS = new ArrayList<>();
         for (Listing listing: listings) {
@@ -146,7 +182,18 @@ public class UserService {
         }
     }
 
+    /**
+     * Edits the user with the given id. Returns a bad request if the user is not the authenticated user or an admin.
+     *
+     *
+     * @param user the user to be edited
+     * @param userDTO the userDTO containing the new information
+     * @return a response entity with the appropriate status code and message
+     */
     public ResponseEntity<String> editUser(User user, UserDTO userDTO) {
+        if(!(authenticationService.isAdmin() || user.getId().equals(jwtService.getAuthenticatedUserId()))
+                || userDTO.getEmail() != null)
+            return ResponseEntity.badRequest().body("You are not allowed to edit this user");
         if(userDTO.getFirstName() != null)
             user.setFirstName(userDTO.getFirstName());
         if(userDTO.getLastName() != null)

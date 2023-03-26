@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * The message entity. A message is a message sent between two users.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Data
 @Builder
 @NoArgsConstructor

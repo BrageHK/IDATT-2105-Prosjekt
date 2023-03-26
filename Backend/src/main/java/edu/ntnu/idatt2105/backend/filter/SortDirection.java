@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.Root;
 /**
  * The different sort directions a field can have.
  * This class is from this website: https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+ *
+ * @author Alvinditya Saputra
  */
 public enum SortDirection {
 

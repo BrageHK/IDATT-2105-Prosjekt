@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * The request body for changing the password of a user.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
  */
 @Data
 @Builder

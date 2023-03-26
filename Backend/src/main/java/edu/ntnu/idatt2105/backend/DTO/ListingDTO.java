@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * The request body for authenticating a listing. Also used for transferring user information.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
  */
 @Data
 @Builder

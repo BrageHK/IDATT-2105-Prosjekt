@@ -7,6 +7,7 @@ import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
 import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
+import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,6 +23,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Service class for listing related operations.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class ListingService {
@@ -32,17 +39,36 @@ public class ListingService {
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final JWTService jwtService;
+    private final AuthenticationService authenticationService;
 
+    /**
+     * Searches the database for listings that match the search parameters in the request. The search
+     * parameters are specified in the request body. The search parameters are converted to a
+     * specification and used to search the database. The search results are returned as a page.
+     * The page number and size are specified in the request parameters.
+     *
+     * @param request The search parameters and page number and size.
+     * @return A page containing the search results.
+     */
     public Page<Listing> searchListing(SearchRequest request) {
         SearchSpecification<Listing> specification = new SearchSpecification<>(request);
         Pageable pageable = SearchSpecification.getPageable(request.getPage(), request.getSize());
         return listingRepository.findAll(specification, pageable);
     }
 
+    /**
+     * Deletes a listing from the database. The listing is deleted if the user is the owner of the listing
+     * or if the user is an admin.
+     *
+     * @param id The id of the listing to be deleted.
+     * @return True if the listing was deleted, false otherwise.
+     * @throws IllegalArgumentException If the listing does not exist.
+     */
     public boolean deleteListing(long id) throws IllegalArgumentException {
         AtomicBoolean deleted = new AtomicBoolean(false);
         listingRepository.findById(id).ifPresent(listing -> {
-            if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+                    || authenticationService.isAdmin()) {
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));
@@ -116,7 +142,15 @@ public class ListingService {
         return json;
     }
 
-    public Long addListing(String listingJson, List<MultipartFile> files, String email) {
+    /**
+     * Adds a listing to the database. The listing is created from a JSON string and a list of images.
+     * The images are stored in the file system of the backend.
+     *
+     * @param listingJson The JSON string containing the listing.
+     * @param files A list of images.
+     * @return The id of the listing.
+     */
+    public Long addListing(String listingJson, List<MultipartFile> files) {
         try {
             FileStorageService fileStorageService = new FileStorageService();
 
@@ -131,7 +165,7 @@ public class ListingService {
                     .latitude(listingDTO.getLatitude())
                     .longitude(listingDTO.getLongitude())
                     .price(listingDTO.getPrice())
-                    .owner(userRepository.findByEmail(email).get())
+                    .owner(userRepository.findByEmail(jwtService.getAuthenticatedUserEmail()).get())
                     .isSold(false)
                     .isCurrentUserOwner(false)
                     .isFavoriteToCurrentUser(false)
@@ -155,6 +189,14 @@ public class ListingService {
         }
     }
 
+    /**
+     * Adds a boolean value to a listing indicating whether the listing is a favourite of the user. This is used
+     * when returning a listing to the frontend. This way the frontend can know that the listing is a favorite, and
+     * display the correct icon.
+     *
+     * @param listings The listings.
+     * @return The listings with the boolean value added.
+     */
     public Page<Listing> addFavoriteBoolean(Page<Listing> listings) {
 
         for(Listing listing : listings) {
@@ -164,6 +206,12 @@ public class ListingService {
         return listings;
     }
 
+    /**
+     * Converts a listing to a ListingDTO.
+     *
+     * @param listing The listing.
+     * @return The ListingDTO.
+     */
     public ListingDTO convertToListingDTO(Listing listing) {
         boolean isFavoriteToCurrentUser = false;
         boolean isCurrentUserOwner = false;
@@ -190,11 +238,21 @@ public class ListingService {
                 .build();
     }
 
+    /**
+     * Edits a listing. The listing is edited from a ListingDTO. The listing is found by id.
+     *
+     * @param id The id of the listing.
+     * @param listingDTO The ListingDTO containing the new values.
+     * @return A ResponseEntity containing a string.
+     */
     public ResponseEntity<String> editListing(Long id, ListingDTO listingDTO) {
         try {
             logger.info("ListingService: editListing: " + listingDTO);
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
                 Listing listing = listingRepository.findById(id).get();
+                if(listingDTO.getPrice() > 0L)
+                    listing.setPrice(listingDTO.getPrice());
                 if(listingDTO.getDescription() != null)
                     listing.setDescription(listingDTO.getDescription());
                 if(listingDTO.getBriefDescription() != null)
@@ -218,6 +276,13 @@ public class ListingService {
         }
     }
 
+    /**
+     * Adds images to a listing. The listing is found by id. Only the owner of the listing or an admin can add images.
+     *
+     * @param id The id of the listing.
+     * @param files The images.
+     * @return A ResponseEntity containing a string.
+     */
     public ResponseEntity<String> addPictures(Long id, List<MultipartFile> files) {
         if(files.isEmpty()) {
             return ResponseEntity.status(400).body("No files selected");
@@ -227,7 +292,8 @@ public class ListingService {
             if(!Objects.requireNonNull(file.getContentType()).contains("image"))
                 return ResponseEntity.status(400).body("At least one file is not an image");
         try {
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
                 for(MultipartFile file : files) {
                     fileStorageService.handleFileUpload(
                             file,
@@ -248,10 +314,21 @@ public class ListingService {
         }
     }
 
+    /**
+     * Removes a picture from a listing. The listing is found by id. Only the owner of the listing or an admin can
+     * remove the picture. The picture is found by pictureId. The picture is removed from the database and the
+     * backend file system.
+     *
+     * @param id The id of the listing.
+     * @param pictureId The id of the picture.
+     * @return A ResponseEntity containing a string.
+     */
     public ResponseEntity<String> removePicture(Long id, Long pictureId) {
         try {
-            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())) {
-                fileStorageService.deleteFile(id.toString(), pictureId.toString());
+            if(listingRepository.findById(id).get().getOwner().getId().equals(jwtService.getAuthenticatedUserId())
+            || authenticationService.isAdmin()) {
+                if(!fileStorageService.deleteFile(id.toString(), pictureId.toString()))
+                    return ResponseEntity.status(400).body("Error removing picture from listing");
                 fileStorageService.removeFileGaps(id.toString());
                 Listing listing = listingRepository.findById(id).get();
                 listing.setNumberOfPictures(listing.getNumberOfPictures() - 1);

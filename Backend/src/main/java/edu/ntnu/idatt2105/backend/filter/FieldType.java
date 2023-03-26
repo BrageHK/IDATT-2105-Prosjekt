@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 /**
  * The different types a field can have.
  * This class is from this website: https://blog.piinalpin.com/2022/04/searching-and-filtering-using-jpa-specification/
+ *
+ * @author Alvinditya Saputra
  */
 @Slf4j
 public enum FieldType {

@@ -6,6 +6,7 @@ import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.DTO.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
+    Logger logger = org.slf4j.LoggerFactory.getLogger(AuthController.class);
     private final AuthenticationService authenticationService;
 
     /**
@@ -37,7 +39,12 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+        try {
+            return ResponseEntity.ok(authenticationService.register(request));
+        } catch (Exception e) {
+            logger.error("Error registering user", e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /**

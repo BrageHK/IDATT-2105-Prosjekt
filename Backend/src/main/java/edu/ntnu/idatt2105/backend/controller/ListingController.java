@@ -58,10 +58,9 @@ public class ListingController {
         if(!jwtService.isAuthenticated()) {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
-        String email = jwtService.getAuthenticatedUserEmail();
 
         Long num;
-        if((num = listingService.addListing(listingJson, files, email)) != null) {
+        if((num = listingService.addListing(listingJson, files)) != null) {
             return ResponseEntity.ok(num.toString());
         } else {
             return ResponseEntity.badRequest().body("Listing not created");
@@ -179,7 +178,7 @@ public class ListingController {
      */
     @Operation(summary = "Remove a picture from a listing", description = "The user must be logged in to remove a " +
             "picture from a listing. The user must be the owner of the listing to remove a picture.")
-    @PutMapping("/{id}/edit/removePicture/{pictureId}")
+    @DeleteMapping("/{id}/edit/removePicture/{pictureId}")
     public ResponseEntity<String> removePicture(
             @PathVariable Long id,
             @PathVariable Long pictureId
