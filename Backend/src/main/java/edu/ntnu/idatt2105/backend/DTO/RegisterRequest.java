@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * The request body for registering a user.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
  */
 @Data
 @Builder

@@ -14,6 +14,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * The authentication filter for the application. This class is used to authenticate the user. It uses the JWTService to
+ * extract the user email from the JWT. It then uses the user details service to load the user by email. If the user is
+ * found, the user is authenticated. If the user is not found, the user is not authenticated.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
@@ -23,6 +31,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JWTService jwtService;
 
+    /**
+     * Filters the request. This method is used to filter the request. It extracts the JWT from the Authorization header.
+     * It then extracts the user email from the JWT. It then uses the user details service to load the user by email. If
+     * the user is found, the user is authenticated. If the user is not found, the user is not authenticated. If the
+     * user is an admin, the user is granted the admin role in the security context.
+     *
+     * @param request The request.
+     * @param response The response.
+     * @param filterChain The filter chain.
+     * @throws ServletException If the request could not be handled.
+     * @throws IOException If the request could not be handled.
+     */
     @Override
     protected void doFilterInternal(@NonNull jakarta.servlet.http.HttpServletRequest request,
                                     @NonNull jakarta.servlet.http.HttpServletResponse response,

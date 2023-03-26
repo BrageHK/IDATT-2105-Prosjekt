@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
+/**
+ * The service for authentication. This service is used to authenticate users and register new users.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -23,6 +29,15 @@ public class AuthenticationService {
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user. This method is used to register a new user. It checks if the email is already taken. If the
+     * email is already taken, an IllegalStateException is thrown. It also checks if the user is an admin. If the user is
+     * not an admin, they can't register another admin. The user is created and saved to the database. A JWT token is
+     * generated and returned.
+     *
+     * @param request The request containing the user information.
+     * @return The response containing the JWT token.
+     */
     public AuthenticationResponse register(RegisterRequest request) {
         if(userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already taken");
@@ -46,6 +61,16 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * This method is used to authenticate a user with the authentication manager and spring security. It uses the
+     * authentication request to get the email and password. The authentication manager authenticates the user. If the
+     * user is not authenticated, an exception is thrown. The user is found in the database. If the user is not found,
+     * an exception is thrown. A JWT token is generated and returned upon successful authentication.
+     *
+     * @param request The request containing the email and password.
+     * @return The response containing the JWT token.
+     * @throws NoSuchElementException If the user is not found in the database.
+     */
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws NoSuchElementException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -61,6 +86,11 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * This method checks the SecurityContext to see if the user is an admin.
+     *
+     * @return True if the user is an admin, false otherwise.
+     */
     public boolean isAdmin() {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString().contains(
                 Role.ADMIN.toString()
