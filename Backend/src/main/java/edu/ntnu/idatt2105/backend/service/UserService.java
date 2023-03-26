@@ -52,6 +52,21 @@ public class UserService {
     }
 
     /**
+     * Returns a JSON string of every user in the database. The user's password is not included in the json string.
+     *
+     * @param List<User> users
+     */
+    public String usersToJson(List<User> users) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user: users) {
+            userDTOS.add(userToDTO(user));
+        }
+        String json = objectMapper.writeValueAsString(userDTOS);
+        return json;
+    }
+
+    /**
      * Converts a user to a userDTO. The userDTO does not contain the user's password.
      *
      * @param user the user to be converted
@@ -59,6 +74,7 @@ public class UserService {
      */
     public UserDTO userToDTO(User user) {
         return UserDTO.builder()
+                .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
@@ -204,5 +220,15 @@ public class UserService {
             user.setAddress(userDTO.getAddress());
         userRepository.save(user);
         return ResponseEntity.ok("User edited");
+    }
+
+    /**
+     * Gets every user from the database and returns them as a JSON string. Does not return the password.
+     *
+     * @return a JSON string containing all users
+     */
+    public String getAllUsersToJson() throws JsonProcessingException {
+        List<User> users = userRepository.findAll();
+        return usersToJson(users);
     }
 }

@@ -73,6 +73,27 @@ public class UserController {
     }
 
     /**
+     * Deletes the user with the given id. The user must be logged in and have the correct permissions to delete a user.
+     * The user can delete themselves, and an admin can delete any user.
+     *
+     * @param id id of the user to delete
+     * @return 200 OK if the user was deleted, 401 if the user is not authenticated or does not have the correct
+     * permissions.
+     */
+    @DeleteMapping("/deleteUser/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        if(!jwtService.isAuthenticated()) {
+            return ResponseEntity.status(401).body("User not authenticated, please log in");
+        }
+        if(!jwtService.getAuthenticatedUserId().equals(id) && !authenticationService.isAdmin()) {
+            return ResponseEntity.status(401).body("User does not have the correct permissions");
+        }
+        User user = userRepository.getReferenceById(jwtService.getAuthenticatedUserId());
+        userRepository.delete(user);
+        return ResponseEntity.ok("User deleted");
+    }
+
+    /**
      * Get the owned listings of the logged-in user. The user must be logged in to get the owned listings.
      *
      * @return List of owned listings as JSON string.
@@ -147,5 +168,24 @@ public class UserController {
     public ResponseEntity<Boolean> isUserAdmin() {
         return ResponseEntity.ok(authenticationService.isAdmin());
     }
+
+    /**
+     * Gets every user in the database. Only admins can use this endpoint. Uses the JWT authentication token to check
+     * the user.
+     */
+    @Operation(summary = "Gets every user in the database", description = "Only admins can use this endpoint. Uses" +
+            " the JWT authentication token to check the user.")
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<String> getAllUsers() throws JsonProcessingException {
+        if(!jwtService.isAuthenticated()) {
+            return ResponseEntity.status(401).body("User not authenticated, please log in");
+        }
+        if(!authenticationService.isAdmin()) {
+            return ResponseEntity.status(403).body("User is not admin");
+        }
+        return ResponseEntity.ok(userService.getAllUsersToJson());
+    }
+
+
 
 }

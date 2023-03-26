@@ -47,8 +47,8 @@ public class Listing implements Serializable {
     private String description;
     @Column(name = "brief_description", nullable = false, columnDefinition = "TEXT")
     private String briefDescription;
-    @Column(name = "category", nullable = false)
-    private String category;
+    //@Column(name = "category", nullable = false)
+    //private String category;
     @Column(name = "address")
     private String address;
     @Column(name = "latitude", nullable = false)
@@ -76,6 +76,11 @@ public class Listing implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
 
     @Override
