@@ -101,9 +101,10 @@ public class ListingController {
      * @param request Request body with search and filter parameters.
      * @return Page of listings.
      */
-    @Operation(summary = "Search for listings", description = "It is possible to search for every field in the listing." +
-            " It is also possible to filter for every field in the listing.")
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Search for listings", description = "It is possible to search for every field in the " +
+            "listing. It is also possible to filter for every field in the listing.")
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<Listing>> search(
             @RequestBody SearchRequest request) {
         try {

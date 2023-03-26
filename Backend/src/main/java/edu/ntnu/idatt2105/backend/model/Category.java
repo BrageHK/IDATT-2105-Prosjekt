@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
  * @author Brage H. Kvamme
  * @version 1.0
  */
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,10 +22,10 @@ import lombok.NoArgsConstructor;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
 }

@@ -88,7 +88,9 @@ public class UserController {
         if(!jwtService.getAuthenticatedUserId().equals(id) && !authenticationService.isAdmin()) {
             return ResponseEntity.status(401).body("User does not have the correct permissions");
         }
-        User user = userRepository.getReferenceById(jwtService.getAuthenticatedUserId());
+        if(authenticationService.isAdmin() && jwtService.getAuthenticatedUserId().equals(id))
+            return ResponseEntity.status(401).body("Admin cannot delete themselves");
+        User user = userRepository.getReferenceById(id);
         userRepository.delete(user);
         return ResponseEntity.ok("User deleted");
     }

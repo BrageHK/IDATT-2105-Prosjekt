@@ -30,7 +30,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     /**
-     * Registers a new user. This method is used to register a new user. It checks if the email is already taken. If the
+     * This method is used to register a new user. It checks if the email is already taken. If the
      * email is already taken, an IllegalStateException is thrown. It also checks if the user is an admin. If the user is
      * not an admin, they can't register another admin. The user is created and saved to the database. A JWT token is
      * generated and returned.

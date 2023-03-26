@@ -78,8 +78,8 @@ public class Listing implements Serializable {
     private User owner;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false, targetEntity = Category.class)
+    @JoinColumn(name = "category_id", nullable = false, columnDefinition = "BIGINT DEFAULT 1")
     private Category category;
 
 

@@ -20,7 +20,8 @@ public class ListingDTO {
     private Long id;
     private String description;
     private String briefDescription;
-    private String category;
+    private Long category;
+    private String categoryName;
     private String address;
     private double latitude;
     private double longitude;

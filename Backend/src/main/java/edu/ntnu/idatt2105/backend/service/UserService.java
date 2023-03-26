@@ -54,7 +54,8 @@ public class UserService {
     /**
      * Returns a JSON string of every user in the database. The user's password is not included in the json string.
      *
-     * @param List<User> users
+     * @param users a list of all users in the database
+     * @return a JSON string of every user in the database
      */
     public String usersToJson(List<User> users) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -80,6 +81,7 @@ public class UserService {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
+                .role(user.getRole())
                 .build();
     }
 

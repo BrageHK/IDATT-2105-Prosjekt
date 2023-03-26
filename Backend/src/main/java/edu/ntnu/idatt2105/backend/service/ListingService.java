@@ -2,6 +2,7 @@ package edu.ntnu.idatt2105.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
+import edu.ntnu.idatt2105.backend.model.Category;
 import edu.ntnu.idatt2105.backend.repository.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
@@ -10,6 +11,7 @@ import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -159,15 +161,17 @@ public class ListingService {
             ObjectMapper mapper = new ObjectMapper();
             ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
 
+            Category category = categoryRepository.findById(listingDTO.getCategory()).get();
+            logger.info("Ispresent: " + categoryRepository.findById(listingDTO.getCategory()).get());
             Listing listing = Listing.builder()
                     .description(listingDTO.getDescription())
                     .briefDescription(listingDTO.getBriefDescription())
-                    .category(categoryRepository.findByName(listingDTO.getCategory()).get())
                     .address(listingDTO.getAddress())
                     .latitude(listingDTO.getLatitude())
                     .longitude(listingDTO.getLongitude())
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(jwtService.getAuthenticatedUserEmail()).get())
+                    .category(category)
                     .isSold(false)
                     .isCurrentUserOwner(false)
                     .isFavoriteToCurrentUser(false)
@@ -227,7 +231,8 @@ public class ListingService {
                 .id(listing.getId())
                 .description(listing.getDescription())
                 .briefDescription(listing.getBriefDescription())
-                .category(listing.getCategory().getName())
+                .category(listing.getCategory().getId())
+                .categoryName(listing.getCategory().getName())
                 .address(listing.getAddress())
                 .latitude(listing.getLatitude())
                 .longitude(listing.getLongitude())
@@ -259,8 +264,8 @@ public class ListingService {
                     listing.setDescription(listingDTO.getDescription());
                 if(listingDTO.getBriefDescription() != null)
                     listing.setBriefDescription(listingDTO.getBriefDescription());
-                if(listingDTO.getCategory() != null)
-                    listing.setCategory(categoryRepository.findByName(listingDTO.getCategory()).get());
+                if(listingDTO.getCategory() != null && categoryRepository.findById(listingDTO.getCategory()).isPresent())
+                    listing.setCategory(categoryRepository.findById(listingDTO.getCategory()).get());
                 if(listingDTO.getAddress() != null)
                     listing.setAddress(listingDTO.getAddress());
                 if(listingDTO.getLatitude() != 0L)
