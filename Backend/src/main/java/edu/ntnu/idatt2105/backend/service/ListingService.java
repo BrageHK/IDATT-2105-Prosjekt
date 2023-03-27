@@ -2,6 +2,9 @@ package edu.ntnu.idatt2105.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
+import edu.ntnu.idatt2105.backend.model.Category;
+import edu.ntnu.idatt2105.backend.model.User;
+import edu.ntnu.idatt2105.backend.repository.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.filter.SearchRequest;
@@ -9,6 +12,7 @@ import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -40,6 +44,7 @@ public class ListingService {
     private final FileStorageService fileStorageService;
     private final JWTService jwtService;
     private final AuthenticationService authenticationService;
+    private final CategoryRepository categoryRepository;
 
     /**
      * Searches the database for listings that match the search parameters in the request. The search
@@ -69,6 +74,7 @@ public class ListingService {
         listingRepository.findById(id).ifPresent(listing -> {
             if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
                     || authenticationService.isAdmin()) {
+                listingRepository.findById(id).get().setCategory(null);
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));
@@ -157,15 +163,17 @@ public class ListingService {
             ObjectMapper mapper = new ObjectMapper();
             ListingDTO listingDTO = mapper.readValue(listingJson, ListingDTO.class);
 
+            Category category = categoryRepository.findById(listingDTO.getCategory()).get();
+            logger.info("Ispresent: " + categoryRepository.findById(listingDTO.getCategory()).get());
             Listing listing = Listing.builder()
                     .description(listingDTO.getDescription())
                     .briefDescription(listingDTO.getBriefDescription())
-                    .category(listingDTO.getCategory())
                     .address(listingDTO.getAddress())
                     .latitude(listingDTO.getLatitude())
                     .longitude(listingDTO.getLongitude())
                     .price(listingDTO.getPrice())
                     .owner(userRepository.findByEmail(jwtService.getAuthenticatedUserEmail()).get())
+                    .category(category)
                     .isSold(false)
                     .isCurrentUserOwner(false)
                     .isFavoriteToCurrentUser(false)
@@ -225,7 +233,8 @@ public class ListingService {
                 .id(listing.getId())
                 .description(listing.getDescription())
                 .briefDescription(listing.getBriefDescription())
-                .category(listing.getCategory())
+                .category(listing.getCategory().getId())
+                .categoryName(listing.getCategory().getName())
                 .address(listing.getAddress())
                 .latitude(listing.getLatitude())
                 .longitude(listing.getLongitude())
@@ -257,8 +266,8 @@ public class ListingService {
                     listing.setDescription(listingDTO.getDescription());
                 if(listingDTO.getBriefDescription() != null)
                     listing.setBriefDescription(listingDTO.getBriefDescription());
-                if(listingDTO.getCategory() != null)
-                    listing.setCategory(listingDTO.getCategory());
+                if(listingDTO.getCategory() != null && categoryRepository.findById(listingDTO.getCategory()).isPresent())
+                    listing.setCategory(categoryRepository.findById(listingDTO.getCategory()).get());
                 if(listingDTO.getAddress() != null)
                     listing.setAddress(listingDTO.getAddress());
                 if(listingDTO.getLatitude() != 0L)
@@ -340,6 +349,22 @@ public class ListingService {
         } catch (Exception e) {
             logger.error("Error removing picture from listing: " + e);
             return ResponseEntity.status(400).body("Error removing picture from listing: " + e);
+        }
+    }
+
+    public ResponseEntity<String> setSold(Long id) {
+        User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
+        Listing listingToEdit = listingRepository.findById(id).get();
+        if(!user.getListings().contains(listingToEdit) && !authenticationService.isAdmin())
+            return ResponseEntity.status(401).body("You are not the owner of this listing");
+        try {
+            Listing listing = listingRepository.findById(id).get();
+            listing.setIsSold(true);
+            listingRepository.save(listing);
+            return ResponseEntity.ok("Listing set to sold");
+        } catch (Exception e) {
+            logger.error("Error setting listing to sold: " + e);
+            return ResponseEntity.status(400).body("Error setting listing to sold");
         }
     }
 }

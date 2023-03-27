@@ -101,9 +101,10 @@ public class ListingController {
      * @param request Request body with search and filter parameters.
      * @return Page of listings.
      */
-    @Operation(summary = "Search for listings", description = "It is possible to search for every field in the listing." +
-            " It is also possible to filter for every field in the listing.")
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Search for listings", description = "It is possible to search for every field in the " +
+            "listing. It is also possible to filter for every field in the listing.")
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<Listing>> search(
             @RequestBody SearchRequest request) {
         try {
@@ -220,4 +221,19 @@ public class ListingController {
         return userService.removeFavorite(id);
     }
 
+    /**
+     * Set a listing as sold. The user must be logged in to set a listing as sold. The user must be the owner of the
+     * listing or be an admin to set a listing as sold.
+     *
+     * @param id ID of the listing.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Set a listing as sold", description = "The user must be logged in to set a listing as sold. "+
+            "The user must be the owner of the listing or be an admin to set a listing as sold.")
+    @PutMapping("/{id}/edit/setSold")
+    public ResponseEntity<String> setSold(
+            @PathVariable Long id
+    ) {
+        return listingService.setSold(id);
+    }
 }

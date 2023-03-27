@@ -1,5 +1,7 @@
 package edu.ntnu.idatt2105.backend.security;
 
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
+import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import io.jsonwebtoken.Claims;
@@ -150,35 +152,6 @@ public class JWTService {
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
-    }
-
-    /**
-     * Updates the password of the authenticated user. The old password is checked against the password in the database.
-     * If the old password is correct, the new password is encoded and saved in the database. If the old password is
-     * wrong, a bad request is returned.
-     *
-     * @param oldPassword The old password.
-     * @param newPassword The new password.
-     * @return A response entity with the status code and message.
-     */
-    public ResponseEntity<String> updatePassword(String oldPassword, String newPassword) {
-        if(oldPassword == null)
-            return ResponseEntity.badRequest().body("Old password cannot be null");
-        if(newPassword == null)
-            return ResponseEntity.badRequest().body("New password cannot be null");
-
-        if(userRepository.findById(getAuthenticatedUserId()).isEmpty())
-            return ResponseEntity.badRequest().body("User not found");
-
-        User user = userRepository.findById(getAuthenticatedUserId()).get();
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            return ResponseEntity.badRequest().body("Old password is wrong");
-        }
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        return ResponseEntity.ok("Password updated");
     }
 
     /**

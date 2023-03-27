@@ -7,6 +7,7 @@ import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.enums.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 /**
  * The service for authentication. This service is used to authenticate users and register new users.
@@ -28,9 +30,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
+    Logger logger = Logger.getLogger(AuthenticationService.class.getName());
 
     /**
-     * Registers a new user. This method is used to register a new user. It checks if the email is already taken. If the
+     * This method is used to register a new user. It checks if the email is already taken. If the
      * email is already taken, an IllegalStateException is thrown. It also checks if the user is an admin. If the user is
      * not an admin, they can't register another admin. The user is created and saved to the database. A JWT token is
      * generated and returned.
@@ -84,6 +87,38 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    /**
+     * Updates the password of the authenticated user. The old password is checked against the password in the database.
+     * If the old password is correct, the new password is encoded and saved in the database. If the old password is
+     * wrong, a bad request is returned.
+     *
+     * @param oldPassword The old password.
+     * @param newPassword The new password.
+     * @return A response entity with the status code and message.
+     */
+    public ResponseEntity<String> updatePassword(String oldPassword, String newPassword) {
+        if(oldPassword == null)
+            return ResponseEntity.badRequest().body("Old password cannot be null");
+        if(newPassword == null)
+            return ResponseEntity.badRequest().body("New password cannot be null");
+
+        if(userRepository.findById(jwtService.getAuthenticatedUserId()).isEmpty())
+            return ResponseEntity.badRequest().body("User not found");
+
+        User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return ResponseEntity.badRequest().body("Old password is wrong");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        logger.info("Password changed for user " + user.getEmail() + " (id: " + user.getId() + ")");
+        AuthenticationResponse response = authenticate(new AuthenticationRequest(user.getEmail(), newPassword));
+        return ResponseEntity.ok(response.getToken());
     }
 
     /**
