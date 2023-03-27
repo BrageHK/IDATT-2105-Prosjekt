@@ -157,7 +157,8 @@
 		font-size: 1.1rem;
 	}
 	.create-listing input,
-	.create-listing textarea {
+	.create-listing textarea,
+	.create-listing select {
 		width: 100%;
 		margin-top: 0.5rem;
 		padding: 0.5rem;
@@ -202,4 +203,6 @@
 		padding-top: 1rem;
 		text-align: center;
 	}
+
+	
 </style>

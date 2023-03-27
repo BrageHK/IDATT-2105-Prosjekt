@@ -50,6 +50,16 @@
     "editListing" : "Edit Listing",
     "existingImages" : "Existing Images",
     "newImages" : "New Images",
-    "delete" : "Delete"
+    "delete" : "Delete",
+    "admin" : "Admin",
+    "loading" : "Loading",
+    "editCategories" : "Edit Categories",
+    "createAdmin" : "Create Admin",
+    "userAccounts" : "User Accounts",
+    "registerAdmin" : "Register Admin",
+    "sold" : "Sold",
+    "markAsSold" : "Mark as Sold",
+    "itemIsSold" : "Item is Sold"
+
   }
   

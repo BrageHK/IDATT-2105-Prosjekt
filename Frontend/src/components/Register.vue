@@ -1,6 +1,6 @@
 <template>
-	<div class="signup-container">
-		<h2>{{ $t('createAccount') }}</h2>
+	<div class="signup-form-container">
+		<h2 class="form-container__title">{{ $t('createAccount') }}</h2>
 		<form @submit.prevent="handleSubmit">
 			<div class="form-group">
 				<label for="name">{{ $t('firstName') }}:</label>
@@ -78,37 +78,4 @@
 </script>
 
 <style scoped>
-	.signup-container {
-		width: 300px;
-	}
-
-	.form-group {
-		margin-bottom: 15px;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 5px;
-	}
-
-	input {
-		width: 100%;
-		padding: 5px;
-		border: 1px solid #ccc;
-		border-radius: 3px;
-	}
-
-	button {
-		background-color: #007bff;
-		color: #fff;
-		padding: 8px 16px;
-		border: none;
-		border-radius: 3px;
-		cursor: pointer;
-		transition: background-color 0.3s ease;
-	}
-
-	button:hover {
-		background-color: #0056b3;
-	}
 </style>

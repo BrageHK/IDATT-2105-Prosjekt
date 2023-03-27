@@ -27,6 +27,9 @@ import { Suspense } from 'vue';
 </script>
 
 <style scoped>
+
+@import './assets/main.css';
+
 	main {
 		padding-top: 100px;
 		min-height: calc(100vh - 215px);

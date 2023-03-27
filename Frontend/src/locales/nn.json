@@ -23,7 +23,7 @@
     "longitude": "Lengdegrad",
     "contactSeller": "Kontakt seljar",
     "myListings": "Mine annonser",
-    "favoriteListings": "Favorittannonser",
+    "favoriteListings": "Favoritt annonser",
     "noAccount" : "Har du ikkje konto?",
     "alreadyHaveAccount" : "Har du allereie konto?",
     "selectCategory": "Vel kategori",
@@ -50,5 +50,14 @@
     "editListing" : "Rediger annonse",
     "existingImages" : "Eksisterande bilete" ,
     "newImages" : "Nye bilete",
-    "delete" : "Slett"
+    "delete" : "Slett" ,
+    "editCategories" : "Rediger kategoriar",
+    "createAdmin" : "Opprett admin",
+    "userAccounts" : "Brukarar",
+    "registerAdmin" : "Registrer admin",
+    "sold" : "Solgt",
+    "markAsSold" : "Merk som solgt",
+    "itemIsSold" : "Varen er solgt",
+    "admin" : "Admin"
+
   }

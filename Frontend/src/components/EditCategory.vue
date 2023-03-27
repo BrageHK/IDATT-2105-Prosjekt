@@ -1,14 +1,16 @@
 <template>
-    <h1>{{ $t("editCategories") }}</h1>
-    <ul>
-        <li v-for="category in categories" :key="category.id">{{ $t(category.name) }}
-            <button @click="removeCategory(category.id)">{{ $t("delete") }}</button>
-        </li>
-    </ul>
-    <form @submit.prevent="addCategory">
-        <input v-model="newCategoryName" placeholder="Enter new category name" />
-        <button type="submit">{{ $t("addCategory") }}</button>
-    </form>
+    <div class="form-container">
+        <h1 class="form-container__title">{{ $t("editCategories") }}</h1>
+        <ul class="list">
+            <li class="list__item" v-for="category in categories" :key="category.id">{{ $t(category.name) }}
+                <button @click="removeCategory(category.id)">{{ $t("delete") }}</button>
+            </li>
+        </ul>
+        <form @submit.prevent="addCategory">
+            <input v-model="newCategoryName" placeholder="$t('enterCategoryName')" />
+            <button type="submit">{{ $t("addCategory") }}</button>
+        </form>
+    </div>
 </template>
 
 <script lang="ts">
@@ -82,5 +84,45 @@ export default {
 
 </script>
 
+
 <style scoped>
+.form-container {
+  max-height: 60vh; 
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f1f1;
+  border-radius: 0.5rem;
+
+}
+
+.list {
+  overflow-y: auto;
+  flex-grow: 1; 
+  margin-bottom: 1rem;
+  padding: 0;
+  list-style-type: none;
+  border-radius: 0.5rem;
+}
+
+.list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ccc;
+
+}
+
+form {
+  display: flex;
+}
+
+input {
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+button {
+  cursor: pointer;
+}
 </style>

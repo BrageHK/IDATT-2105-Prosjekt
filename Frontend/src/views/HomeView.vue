@@ -204,13 +204,12 @@ export default {
 
 
 <style scoped>
-
-.grid-wrapper{
-	--max-width: 1524px; 
-	max-width: var(--max-width);
-	display: flex;
-	justify-content: center;
-	margin: 0 auto;
+.grid-wrapper {
+    --max-width: 1524px;
+    max-width: var(--max-width);
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 .searchbar-wrapper {
@@ -237,10 +236,12 @@ export default {
 input[type="text"],
 select {
     padding: 8px 12px;
+    margin: 0; /* Reset margin */
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
     font-size: 16px;
+    box-sizing: border-box; /* Fix for width and height */
 }
 
 input[type="text"] {
@@ -248,6 +249,29 @@ input[type="text"] {
 }
 
 select {
-    width: 200px;
+    width: 250px;
+    appearance: none; /* Remove default styling for consistent appearance */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 767px) {
+    input[type="text"] {
+        width: 100%;
+    }
+
+    select {
+        width: 100%;
+    }
+
+    .searchbar-wrapper {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-wrapper,
+    .category-wrapper,
+    .sort-wrapper {
+        width: 100%;
+    }
 }
 </style>

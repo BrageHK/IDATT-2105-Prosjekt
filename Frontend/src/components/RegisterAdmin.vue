@@ -1,6 +1,6 @@
 <template>
-	<div class="signup-container">
-		<h2>{{ $t('createAdmin') }}</h2>
+	<div class="form-container">
+		<h2 class="form-container__title">{{ $t('createAdmin') }}</h2>
 		<form @submit.prevent="handleSubmit">
 			<div class="form-group">
 				<label for="name">{{ $t('firstName') }}:</label>
@@ -26,7 +26,7 @@
 				<label for="phoneNumber">{{ $t('phone') }}:</label>
 				<input type="number" id="phoneNumber" v-model="phoneNumber" required />
 			</div>
-            <div class="form-group">
+            <div class="checkbox-container">
                 <label for="isAdmin">{{ $t('admin') }}:</label>
                 <input type="checkbox" id="isAdmin" v-model="isAdmin" />
             </div>
@@ -89,37 +89,12 @@
 </script>
 
 <style scoped>
-	.signup-container {
-		width: 300px;
-	}
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
 
-	.form-group {
-		margin-bottom: 15px;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 5px;
-	}
-
-	input {
-		width: 100%;
-		padding: 5px;
-		border: 1px solid #ccc;
-		border-radius: 3px;
-	}
-
-	button {
-		background-color: #007bff;
-		color: #fff;
-		padding: 8px 16px;
-		border: none;
-		border-radius: 3px;
-		cursor: pointer;
-		transition: background-color 0.3s ease;
-	}
-
-	button:hover {
-		background-color: #0056b3;
-	}
+.checkbox-container input[type="radio"] {
+  margin-right: 0.5rem;
+}
 </style>

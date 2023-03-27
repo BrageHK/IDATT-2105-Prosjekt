@@ -23,7 +23,7 @@
     "longitude": "Lengdegrad",
     "contactSeller": "Kontakt selger",
     "myListings": "Mine annonser",
-    "favoriteListings": "Favorittannonser",
+    "favoriteListings": "Favoritt annonser",
     "noAccount" : "Har du ikke konto?",
     "alreadyHaveAccount" : "Har du allerede konto?",
     "selectCategory": "Velg kategori",
@@ -50,6 +50,14 @@
     "editListing" : "Rediger annonse" ,
     "existingImages" : "Eksisterende bilder" ,
     "newImages" : "Nye bilder" ,
-    "delete" : "Slett"  
+    "delete" : "Slett" ,
+    "editCategories" : "Rediger kategorier" ,
+    "createAdmin" : "Opprett admin" ,
+    "userAccounts" : "Brukerkontoer" ,
+    "registerAdmin" :  "Registrer admin" ,
+    "sold" : "Solgt",
+    "markAsSold" : "Marker som solgt",
+    "itemIsSold" : "Varen er solgt",
+    "admin" : "Admin"
   }
   

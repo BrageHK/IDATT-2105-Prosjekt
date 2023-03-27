@@ -48,7 +48,16 @@
     "confirmPassword" : "パスワードを認証する",
     "change" : "変更する",
     "editListing" : "リスティングを編集する",
-    "existingImages" : "既存の画像",
-    "newImages" : "新しい画像",
-    "delete" : "削除する"
+    "existingImages" : "既存の画像" ,
+    "newImages" : "新しい画像", 
+    "delete" : "削除する",
+    "admin" : "管理者",
+    "loading" : "ロード中",
+    "editCategories" : "カテゴリーを編集する",
+    "createAdmin" : "管理者を作成する",
+    "userAccounts" : "ユーザーアカウント",
+    "registerAdmin" :  "管理者を登録する",
+    "sold" : "売り切れ",
+    "markAsSold" : "売り切れとしてマークする",
+    "itemIsSold" : "アイテムは売り切れです"
 }
