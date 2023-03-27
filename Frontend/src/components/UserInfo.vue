@@ -1,6 +1,6 @@
 <template>
-	<div class="user-info">
-		<h2>{{ $t('userInfo') }}</h2>
+	<div class="form-container">
+		<h2 class="form-container__title">{{ $t('userInfo') }}</h2>
 		<div v-if="user" class="form">
 			<form @submit.prevent="saveUser">
 				<div class="form-group">
@@ -82,7 +82,9 @@ export default {
 						'Authorization': `Bearer ${token}`,
 					},
 				});
-				alert(response.data);
+				localStorage.removeItem('authToken');
+          		localStorage.setItem('authToken', response.data);
+          		this.$router.push('/');
 			} catch (error) {
 				console.log(error);
 			}
@@ -92,61 +94,5 @@ export default {
 </script>
 
 <style scoped>
-.user-info {
-	max-width: 600px;
-	margin: auto;
-}
 
-h2 {
-	text-align: center;
-}
-
-.form {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-top: 1rem;
-}
-
-.form-group {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 1rem;
-	width: 100%;
-}
-
-label {
-	font-weight: bold;
-}
-
-input {
-	padding: 0.5rem;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	width: 100%;
-}
-
-button {
-	padding: 0.5rem;
-	background-color: #007bff;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.3s ease;
-}
-
-button:hover {
-	background-color: #0062cc;
-}
-
-@media (max-width: 767px) {
-	input {
-		font-size: 0.8rem;
-	}
-
-	button {
-		font-size: 0.8rem;
-	}
-}
 </style>

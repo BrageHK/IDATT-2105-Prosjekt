@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue';
 import CreateListingView from '../views/CreateListingView.vue';
 import UserviewVue from '@/views/Userview.vue';
 import EditListingView from '@/views/EditListingView.vue';
+import AdminViewVue from '@/views/AdminView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,7 +43,12 @@ const router = createRouter({
       component: UserviewVue,
       meta: { requiresAuth: true }
     },
-
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminViewVue,
+      meta: { requiresAuth: true }
+    },
   ]
 }) 
 

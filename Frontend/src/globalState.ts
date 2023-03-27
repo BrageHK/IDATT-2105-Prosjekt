@@ -1,6 +1,6 @@
 import { ref, readonly } from 'vue';
 
-const serverIP = ref('http://192.168.86.142:8080');
+const serverIP = ref('http://192.168.86.40:8080');
 const categories = ref([
       "electronics",
       "furniture",

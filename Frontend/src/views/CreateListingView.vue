@@ -26,8 +26,8 @@
 					<label for="category">{{ $t('category') }}:</label>
 					<select v-model="listingData.category" required >
         			<option disabled value="">{{ $t('selectCategory') }}</option>
-        			<option v-for="category in categories" :key="category" :value="category">
-		  			{{ $t(category) }}
+        			<option v-for="category in categories" :key="category.id" :value="category.id">
+		  			{{ $t(category.name) }}
 					</option>		
 					</select>
 				</div>
@@ -54,6 +54,11 @@
 	import { getIp, getCategories } from '@/globalState';
 	import router from '@/router';
 
+	interface category {
+		id: number;
+		name: string;
+	}
+
 	export default {
 		name: 'CreateListingView',
 		data() {
@@ -69,15 +74,23 @@
 				},
 				files: [] as File[],
 				imagePreviews: [] as string[],
+				categories: [] as category[],
 			};
+		},
+		async mounted() {
+			
+			try {
+				const response = await axios.get(this.serverIP + '/api/category/getAllCategories');
+				this.categories = response.data;
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+			}
 		},
 		setup() {
 			const { serverIP } = getIp();
-			const { categories } = getCategories();
 
 			return {
 				serverIP,
-				categories,
 			};
 		},
 		methods: {
@@ -88,6 +101,7 @@
 				this.imagePreviews = this.files.map(file => URL.createObjectURL(file));
 			},
 			async submitForm() {
+				console.log(this.listingData.category);
 				try {
 
 					const formData = new FormData();
@@ -143,7 +157,8 @@
 		font-size: 1.1rem;
 	}
 	.create-listing input,
-	.create-listing textarea {
+	.create-listing textarea,
+	.create-listing select {
 		width: 100%;
 		margin-top: 0.5rem;
 		padding: 0.5rem;
@@ -188,4 +203,6 @@
 		padding-top: 1rem;
 		text-align: center;
 	}
+
+	
 </style>

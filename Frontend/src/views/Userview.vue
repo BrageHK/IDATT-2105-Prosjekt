@@ -1,22 +1,30 @@
 <template>
-	<div class="sidebar">
-		<nav>
+	<div class="container">
+		<nav class="sidebar">
 			<ul>
-				<li @click="selectedOption = 'user-info'">{{ $t('userInfo') }}</li>
-				<li @click="selectedOption = 'my-listings'">{{ $t('myListings') }}</li>
-				<li @click="selectedOption = 'favorite-listings'">{{ $t('favoriteListings') }}</li>
+				<li @click="selectedOption = 'user-info'" :class="{ active: selectedOption === 'user-info' }">{{ $t('userInfo') }}</li>
+				<li @click="selectedOption = 'my-listings'" :class="{ active: selectedOption === 'my-listings' }">{{ $t('myListings') }}</li>
+				<li @click="selectedOption = 'favorite-listings'" :class="{ active: selectedOption === 'favorite-listings' }">{{ $t('favoriteListings') }}</li>
 			</ul>
 		</nav>
-		<div v-if="selectedOption === 'user-info'">
-			<user-info />
-			<password-change-form/>
-		</div>
-		<div v-else-if="selectedOption === 'my-listings'">
-			<listing-card-grid :Listings="owned"/>
-		</div>
+		<div class="content">
+			<div v-if="selectedOption === 'user-info'">
+				<div class="edit-wrapper">
+					<user-info />
+					<password-change-form/>
+				</div>
+			</div>
+			<div v-else-if="selectedOption === 'my-listings'">
+				<div class="card-grid-wrapper"> 
+					<listing-card-grid :Listings="owned"/>
+				</div>
+			</div>
 
-		<div v-else-if="selectedOption === 'favorite-listings'">
-			<listing-card-grid :Listings="favorites"/>
+			<div v-else-if="selectedOption === 'favorite-listings'">
+				<div class="card-grid-wrapper"> 
+					<listing-card-grid :Listings="favorites"/>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -60,7 +68,7 @@ export default {
 			console.log('favorites' + this.favorites);
 		})
 		.catch(error => {
-			console.error(error);
+			alert(error.response.data);
 		});
 
 		axios.get(this.serverIP + '/api/user/getUser/listings', {
@@ -73,7 +81,7 @@ export default {
 			console.log(response.data);
 		})
 		.catch(error => {
-			console.error(error);
+			alert(error.response.data);
 		});
 	}
 };
@@ -81,15 +89,34 @@ export default {
 
 <style scoped>
 .sidebar {
-	display: flex;
-	flex-direction: row;
+  background-color: #f1f1f1;
+  padding: 1rem;
+  height: calc(100vh - 248px);;
 }
 
-nav {
-	background-color: #f1f1f1;
-	overflow: hidden;
+.container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-content: center;
+  align-items: center;
+  align-items: flex-start;
+  overflow: auto;
+}
+
+.edit-wrapper {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	justify-content: center;
+  	align-items: flex-start;
+}
+
+.content {
+	display: flex;
+  justify-content: center;
+  overflow: auto;
+  height: calc(100vh - 20px);
+  overflow: scroll;
+  
 }
 
 nav ul {
@@ -100,6 +127,7 @@ nav ul {
 	flex-direction: column;
 }
 
+
 nav li {
 	text-align: center;
 	padding: 14px 16px;
@@ -108,10 +136,41 @@ nav li {
 
 nav li:hover {
 	background-color: #ddd;
+	border-radius: 0.5rem;
 }
 
 nav li.active {
-	background-color: #4CAF50;
+	background-color: #0718c4;
 	color: white;
+	border-radius: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    height: auto;
+    width: 100%;
+  }
+
+  .edit-wrapper {
+	padding-top: 0px;
+	flex-direction: column;
+}
+
+  nav ul {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .content {
+    height: auto;
+  }
+
+  .card-grid-wrapper {
+    padding-top: 80px;
+  }
 }
 </style>

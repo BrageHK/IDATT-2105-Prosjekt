@@ -2,19 +2,26 @@
     <div class="listing-view">
         <div class="listing-image">
             <button @click="previousImage">&lt;</button>
-            <img v-bind:src="image" alt="" />
+            <div class="image-container">
+                <img v-bind:src="image" alt="" />
+                <div v-if="isSold" class="sold-overlay">{{ $t('sold') }}</div>
+            </div>
             <button @click="nextImage">></button>
 			<h1>{{ (currentImageIndex+1) + "/" + numberOfPictures }}</h1>
         </div>
         <div class="listing-details">
             <h2>{{ briefDescription }}</h2>
-            <span>{{ price + ' NOK' }}</span>
-            <p>{{ $t('category') }}: {{ category }}</p>
+            <span v-if="!isSold">{{ price + ' NOK' }}</span>
+            <span v-else>{{ $t('itemIsSold') }}</span>
+            <p>{{ $t('category') }}: {{ $t(category) }}</p>
             <div class="listing-actions">
-                <button @click="">{{ $t('contactSeller') }}</button>
+                <button v-if="!isowner" @click="">{{ $t('contactSeller') }}</button>
+                <button v-if="isowner || isAdmin" @click="editListing">{{ $t('editListing') }}</button>
+                <button v-if="isowner || isAdmin" @click="deleteListing">{{ $t('delete') }}</button>
+                <button v-if="(isowner || isAdmin) && !isSold" @click="markAsSold">{{ $t('markAsSold') }}</button>
+            </div>
+            <div class="favorite-wrapper">
                 <img v-bind:src="favoriteIcon" @click.stop="toggleFavorite" alt="Add to favorites" class="favorite-icon"/>
-                <button v-if="isowner" @click="editListing">{{ $t('editListing') }}</button>
-                <button v-if="isowner" @click="deleteListing">{{ $t('delete') }}</button>
             </div>
             <p>{{ description }}</p>
             <p>{{ $t('address') }}: {{ address }}</p>
@@ -30,6 +37,7 @@ import heartFilled from '@/assets/images/heartFilled.svg';
 import heartOutline from '@/assets/images/heartOutline.svg';
 import { getIp } from '@/globalState';
 import router from '@/router';
+import { ref } from 'vue';
 
 export default {
     name: 'ListingView',
@@ -57,6 +65,8 @@ export default {
             isFavorite: false,
             favoriteIcon: heartOutline,
             favoriteIconFilled: heartFilled,
+            isAdmin : ref(false),
+            isSold: false,
         };
     },
     methods: {
@@ -137,15 +147,49 @@ export default {
                             'Authorization': `Bearer ${token}`,
                         },
                     });
-                    router.push('/');
+                    router.go(-1);
+                    //router.push('/');
                 } catch (error) {
                     console.error("Error deleting listing:", error);
                 }
             }
         },
+        async checkAdmin(){
+            try
+				{	
+					console.log("checkAdmin");
+					const token = localStorage.getItem('authToken');
+					const response = await axios.get(this.serverIP + "/api/user/getUser/isAdmin", {
+						headers: {
+							"Authorization": `Bearer ${token}`,
+						},
+					}
+					).then((response) => {
+						this.isAdmin = response.data ;
+					});
+				} catch (error) {
+					console.log(error);
+				}
+        },
+        async markAsSold() {
+            try {
+                const token = localStorage.getItem("authToken");
+                const response = await axios.put(`${this.serverIP}/api/listing/${this.id}/edit/setSold`, null, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                });
+                this.isSold = true;
+                console.log(response);
+            } catch (error) {
+                console.error("Error marking listing as sold:", error);
+            }
+        },
     },
     created() {
         console.log(this.serverIP);
+
+        this.checkAdmin();
 
         const token = localStorage.getItem('authToken');
 
@@ -166,12 +210,13 @@ export default {
                 this.price = response.data.price;
                 this.numberOfPictures = response.data.numberOfPictures;
                 this.description = response.data.description;
-                this.category = response.data.category;
+                this.category = response.data.categoryName;
                 this.address = response.data.address;
                 this.latitude = response.data.latitude;
                 this.longitude = response.data.longitude;
                 this.isFavorite = response.data.isFavoriteToCurrentUser;
                 this.isowner = response.data.isCurrentUserOwner;
+                this.isSold = response.data.isSold;
                 if (this.isFavorite) {
                     this.favoriteIcon = this.favoriteIconFilled;
                 }
@@ -190,6 +235,26 @@ export default {
 </script>
 
 <style scoped>
+
+.image-container {
+  position: relative;
+}
+
+.sold-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #f00;
+}
+
 .listing-view {
     display: flex;
     flex-direction: column;
@@ -201,10 +266,11 @@ export default {
 }
 
 .listing-image {
-    height: 400px;
+    height: auto;
     width: 100%;
     display: flex;
     justify-content: center;
+    position: relative;
 }
 
 .listing-image img {

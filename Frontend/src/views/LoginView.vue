@@ -40,10 +40,10 @@
 	align-items: center;
 	width: fit-content;
 	margin: 0 auto;
-	border: 1px solid #ccc;
+	
 	border-radius: 5px;
 	padding: 20px;
-	background-color: #f9f9f9;
+	
 }
 
 a {
