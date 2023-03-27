@@ -12,7 +12,6 @@ import edu.ntnu.idatt2105.backend.filter.SearchSpecification;
 import edu.ntnu.idatt2105.backend.model.Listing;
 import edu.ntnu.idatt2105.backend.security.AuthenticationService;
 import edu.ntnu.idatt2105.backend.security.JWTService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -74,13 +73,14 @@ public class ListingService {
         listingRepository.findById(id).ifPresent(listing -> {
             if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
                     || authenticationService.isAdmin()) {
+                logger.info("Deleting listing with id: " + id);
                 listingRepository.findById(id).get().setCategory(null);
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));
                     deleted.set(true);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error deleting folder: " + e);
                 }
             }
         });
@@ -352,6 +352,12 @@ public class ListingService {
         }
     }
 
+    /**
+     * Sets the status of a listing as sold. Only the owner of the listing or an admin can set the listing as sold.
+     *
+     * @param id The id of the listing.
+     * @return A ResponseEntity containing a with feedback.
+     */
     public ResponseEntity<String> setSold(Long id) {
         User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
         Listing listingToEdit = listingRepository.findById(id).get();
@@ -364,7 +370,7 @@ public class ListingService {
             return ResponseEntity.ok("Listing set to sold");
         } catch (Exception e) {
             logger.error("Error setting listing to sold: " + e);
-            return ResponseEntity.status(400).body("Error setting listing to sold");
+            return ResponseEntity.status(400).body("Error setting listing to sold: " + e);
         }
     }
 }

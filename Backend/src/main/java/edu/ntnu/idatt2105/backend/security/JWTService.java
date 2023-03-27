@@ -1,7 +1,6 @@
 package edu.ntnu.idatt2105.backend.security;
 
-import edu.ntnu.idatt2105.backend.DTO.AuthenticationRequest;
-import edu.ntnu.idatt2105.backend.DTO.AuthenticationResponse;
+
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
 import edu.ntnu.idatt2105.backend.model.User;
 import io.jsonwebtoken.Claims;
@@ -10,7 +9,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

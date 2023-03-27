@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ntnu.idatt2105.backend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

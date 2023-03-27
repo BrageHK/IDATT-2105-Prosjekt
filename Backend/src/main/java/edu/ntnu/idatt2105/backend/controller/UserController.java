@@ -57,6 +57,19 @@ public class UserController {
     }
 
     /**
+     * Get seller with the given id. Only returns phone, email and name.
+     *
+     * @param id id of the user to get.
+     * @return User info as JSON string.
+     * @throws JsonProcessingException if the user cannot be converted to JSON.
+     */
+    @Operation(summary = "Get seller with the given id", description = "Only returns phone, email and name")
+    @GetMapping("/getSeller/{id}")
+    public ResponseEntity<String> getSellerById(@PathVariable Long id) throws JsonProcessingException {
+        return userService.getSellerById(id);
+    }
+
+    /**
      * Get the favorite listings of the logged-in user.
      *
      * @return List of favorite listings as JSON string.
@@ -82,17 +95,7 @@ public class UserController {
      */
     @DeleteMapping("/deleteUser/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        if(!jwtService.isAuthenticated()) {
-            return ResponseEntity.status(401).body("User not authenticated, please log in");
-        }
-        if(!jwtService.getAuthenticatedUserId().equals(id) && !authenticationService.isAdmin()) {
-            return ResponseEntity.status(401).body("User does not have the correct permissions");
-        }
-        if(authenticationService.isAdmin() && jwtService.getAuthenticatedUserId().equals(id))
-            return ResponseEntity.status(401).body("Admin cannot delete themselves");
-        User user = userRepository.getReferenceById(id);
-        userRepository.delete(user);
-        return ResponseEntity.ok("User deleted");
+        return userService.deleteUser(id);
     }
 
     /**

@@ -209,9 +209,17 @@ public class UserService {
      * @return a response entity with the appropriate status code and message
      */
     public ResponseEntity<String> editUser(User user, UserDTO userDTO) {
-        if(!(authenticationService.isAdmin() || user.getId().equals(jwtService.getAuthenticatedUserId()))
-                || userDTO.getEmail() != null)
+        if(!jwtService.isAuthenticated() || !jwtService.getAuthenticatedUserId().equals(user.getId())
+                && !authenticationService.isAdmin())
             return ResponseEntity.badRequest().body("You are not allowed to edit this user");
+        if(userDTO.getEmail() != null) {
+            if(userRepository.findByEmail(userDTO.getEmail()).isEmpty()){
+                user.setEmail(userDTO.getEmail());
+            } else {
+                return ResponseEntity.badRequest().body("Email already in use");
+            }
+        }
+        userDTO.setId(user.getId());
         if(userDTO.getFirstName() != null)
             user.setFirstName(userDTO.getFirstName());
         if(userDTO.getLastName() != null)
@@ -233,5 +241,45 @@ public class UserService {
     public String getAllUsersToJson() throws JsonProcessingException {
         List<User> users = userRepository.findAll();
         return usersToJson(users);
+    }
+
+    public ResponseEntity<String> deleteUser(Long id) {
+        if(!jwtService.isAuthenticated()) {
+            return ResponseEntity.status(401).body("User not authenticated, please log in");
+        }
+        if(!jwtService.getAuthenticatedUserId().equals(id) && !authenticationService.isAdmin()) {
+            return ResponseEntity.status(401).body("User does not have the correct permissions");
+        }
+        if(authenticationService.isAdmin() && jwtService.getAuthenticatedUserId().equals(id))
+            return ResponseEntity.status(401).body("Admin cannot delete themselves");
+        User user = userRepository.getReferenceById(id);
+        for(Listing listing: user.getListings()) {
+            listingService.deleteListing(listing.getId());
+        }
+        //user.setListings(new ArrayList<>());
+        //userRepository.save(user);
+        userRepository.delete(user);
+        return ResponseEntity.ok("User deleted");
+    }
+
+    /**
+     * Gets the user with the given id and returns it as a JSON string. Does not return the password.
+     * Returns a bad request if the user does not exist.
+     * Returns ok if the user was found.
+     *
+     * @param id
+     * @return
+     * @throws JsonProcessingException
+     */
+    public ResponseEntity<String> getSellerById(Long id) throws JsonProcessingException {
+        if(!userRepository.existsById(id)) {
+            return ResponseEntity.badRequest().body("User does not exist");
+        }
+        User user = userRepository.findById(id).get();
+        user.setPassword(null);
+        user.setRole(null);
+        user.setAddress(null);
+        user.setId(null);
+        return ResponseEntity.ok(userToJson(user));
     }
 }
