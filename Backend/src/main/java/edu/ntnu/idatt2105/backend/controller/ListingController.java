@@ -221,4 +221,19 @@ public class ListingController {
         return userService.removeFavorite(id);
     }
 
+    /**
+     * Set a listing as sold. The user must be logged in to set a listing as sold. The user must be the owner of the
+     * listing or be an admin to set a listing as sold.
+     *
+     * @param id ID of the listing.
+     * @return A status message with either ok or error.
+     */
+    @Operation(summary = "Set a listing as sold", description = "The user must be logged in to set a listing as sold. "+
+            "The user must be the owner of the listing or be an admin to set a listing as sold.")
+    @PutMapping("/{id}/edit/setSold")
+    public ResponseEntity<String> setSold(
+            @PathVariable Long id
+    ) {
+        return listingService.setSold(id);
+    }
 }

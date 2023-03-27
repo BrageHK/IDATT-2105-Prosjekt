@@ -3,6 +3,7 @@ package edu.ntnu.idatt2105.backend.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.ntnu.idatt2105.backend.DTO.ListingDTO;
 import edu.ntnu.idatt2105.backend.model.Category;
+import edu.ntnu.idatt2105.backend.model.User;
 import edu.ntnu.idatt2105.backend.repository.CategoryRepository;
 import edu.ntnu.idatt2105.backend.repository.ListingRepository;
 import edu.ntnu.idatt2105.backend.repository.UserRepository;
@@ -73,6 +74,7 @@ public class ListingService {
         listingRepository.findById(id).ifPresent(listing -> {
             if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
                     || authenticationService.isAdmin()) {
+                listingRepository.findById(id).get().setCategory(null);
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));
@@ -350,4 +352,19 @@ public class ListingService {
         }
     }
 
+    public ResponseEntity<String> setSold(Long id) {
+        User user = userRepository.findById(jwtService.getAuthenticatedUserId()).get();
+        Listing listingToEdit = listingRepository.findById(id).get();
+        if(!user.getListings().contains(listingToEdit) && !authenticationService.isAdmin())
+            return ResponseEntity.status(401).body("You are not the owner of this listing");
+        try {
+            Listing listing = listingRepository.findById(id).get();
+            listing.setIsSold(true);
+            listingRepository.save(listing);
+            return ResponseEntity.ok("Listing set to sold");
+        } catch (Exception e) {
+            logger.error("Error setting listing to sold: " + e);
+            return ResponseEntity.status(400).body("Error setting listing to sold");
+        }
+    }
 }

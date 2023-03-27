@@ -156,7 +156,7 @@ public class UserController {
         if(!jwtService.isAuthenticated()) {
             return ResponseEntity.status(401).body("User not authenticated, please log in");
         }
-        return jwtService.updatePassword(passwordEditRequest.getOldPassword(), passwordEditRequest.getNewPassword());
+        return authenticationService.updatePassword(passwordEditRequest.getOldPassword(), passwordEditRequest.getNewPassword());
     }
 
     /**

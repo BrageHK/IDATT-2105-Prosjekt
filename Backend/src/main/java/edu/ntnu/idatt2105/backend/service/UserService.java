@@ -221,7 +221,8 @@ public class UserService {
         if (userDTO.getAddress() != null)
             user.setAddress(userDTO.getAddress());
         userRepository.save(user);
-        return ResponseEntity.ok("User edited");
+        String jwtToken = jwtService.generateToken(user);
+        return ResponseEntity.ok(jwtToken);
     }
 
     /**
