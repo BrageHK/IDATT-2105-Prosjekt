@@ -59,7 +59,14 @@
     "registerAdmin" : "Register Admin",
     "sold" : "Sold",
     "markAsSold" : "Mark as Sold",
-    "itemIsSold" : "Item is Sold"
+    "itemIsSold" : "Item is Sold",
+    "enterCategoryName" : "Enter Category Name",
+    "addCategory" : "Add Category",
+    "role" : "Role",
+    "deleteImage" : "Delete Image"
+
+
+
 
   }
   

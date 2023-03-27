@@ -58,6 +58,11 @@
     "sold" : "Solgt",
     "markAsSold" : "Merk som solgt",
     "itemIsSold" : "Varen er solgt",
-    "admin" : "Admin"
+    "admin" : "Admin",
+    "loading" : "Lastar",
+    "enterCategoryName" : "Skriv inn kategorinamn",
+    "addCategory" : "Legg til kategori",
+    "role" : "Rolle",
+    "deleteImage" : "Slett bilete"
 
   }

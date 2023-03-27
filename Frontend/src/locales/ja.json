@@ -59,5 +59,9 @@
     "registerAdmin" :  "管理者を登録する",
     "sold" : "売り切れ",
     "markAsSold" : "売り切れとしてマークする",
-    "itemIsSold" : "アイテムは売り切れです"
+    "itemIsSold" : "アイテムは売り切れです",
+    "enterCategoryName" : "カテゴリー名を入力してください",
+    "addCategory" : "カテゴリーを追加する",
+    "role" : "役割",
+    "deleteImage" : "画像を削除する"
 }
