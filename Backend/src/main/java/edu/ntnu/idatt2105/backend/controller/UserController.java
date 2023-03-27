@@ -82,17 +82,7 @@ public class UserController {
      */
     @DeleteMapping("/deleteUser/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        if(!jwtService.isAuthenticated()) {
-            return ResponseEntity.status(401).body("User not authenticated, please log in");
-        }
-        if(!jwtService.getAuthenticatedUserId().equals(id) && !authenticationService.isAdmin()) {
-            return ResponseEntity.status(401).body("User does not have the correct permissions");
-        }
-        if(authenticationService.isAdmin() && jwtService.getAuthenticatedUserId().equals(id))
-            return ResponseEntity.status(401).body("Admin cannot delete themselves");
-        User user = userRepository.getReferenceById(id);
-        userRepository.delete(user);
-        return ResponseEntity.ok("User deleted");
+        return userService.deleteUser(id);
     }
 
     /**

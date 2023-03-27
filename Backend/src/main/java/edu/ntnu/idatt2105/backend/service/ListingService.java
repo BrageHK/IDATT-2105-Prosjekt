@@ -74,13 +74,14 @@ public class ListingService {
         listingRepository.findById(id).ifPresent(listing -> {
             if(listing.getOwner().getId().equals(jwtService.getAuthenticatedUserId())
                     || authenticationService.isAdmin()) {
+                logger.info("Deleting listing with id: " + id);
                 listingRepository.findById(id).get().setCategory(null);
                 listingRepository.deleteById(id);
                 try {
                     fileStorageService.deleteFolder(Long.toString(id));
                     deleted.set(true);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("Error deleting folder: " + e);
                 }
             }
         });
