@@ -1,0 +1,132 @@
+* {
+    font-family: Helvetica, sans-serif;
+  }
+
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 1rem;
+  }
+  
+  .form-container__title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #0718c4;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  input,
+  textarea {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  button {
+    background-color: #0718c4;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0a43d1;
+  }
+  
+  @media (max-width: 767px) {
+    input,
+    textarea {
+      font-size: 0.8rem;
+    }
+    button {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .list__item:last-child {
+    border-bottom: none;
+  }
+
+  select {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    cursor: pointer;
+  }
+  
+  select:hover {
+    border-color: #aaa;
+  }
+  
+  select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(7, 24, 196, 0.2);
+  }
+  
+  select option {
+    padding: 0.5rem;
+    font-size: 1rem;
+    background-color: #fff;
+    color: #000;
+  }
+  
+  @media (max-width: 767px) {
+    select {
+      font-size: 0.8rem;
+    }
+  }
+
+  
