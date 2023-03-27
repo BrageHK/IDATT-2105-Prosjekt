@@ -2,8 +2,15 @@
 	<header>
 		<Navbar />
 	</header>
-	<main>
-		<RouterView />
+	<main >
+		<Suspense>
+      		<template #default>
+        		<RouterView />
+      		</template>
+      		<template #fallback>
+        		<div>{{ $t('loading') }}...</div>
+      		</template>
+    	</Suspense>
 	</main>
 	<v-footer>
 		<div class="wrapper">
@@ -15,6 +22,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue';
+import { Suspense } from 'vue';
+
 </script>
 
 <style scoped>

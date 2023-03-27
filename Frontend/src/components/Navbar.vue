@@ -4,6 +4,7 @@
 			<RouterLink to="/"><img :src="logoPath" alt="My Logo" class="logo" /></RouterLink>
 			<div v-if="isAuthenticated"><router-link class="nav-link" to="/create-listing">{{ $t('createListing') }}</router-link></div>
 			<div v-if="isAuthenticated"><router-link class="nav-link" to="/user">{{ $t('myPage') }}</router-link></div>
+			<div v-if="isAuthenticated && isAdmin"><router-link class="nav-link" to="/admin">{{ $t('admin') }}</router-link></div>
 			<div v-if="!isAuthenticated"><router-link class="nav-link" to="/login">{{ $t('signIn') }}</router-link></div>
 			<div v-if="isAuthenticated" class="nav-link" @click="logout">{{ $t('signOut') }}</div>
 			<div>
@@ -22,6 +23,8 @@
 	import logoPath from '@/assets/images/logo.svg';
 	import router from '@/router';
 	import { ref } from 'vue';
+	import { getIp } from '@/globalState';
+	import axios from 'axios';
 
 	export default {
 		name: 'Navbar',
@@ -30,6 +33,13 @@
 				selectedLanguage: this.$i18n.locale,
 				isAuthenticated: ref(!!localStorage.getItem('authToken')),
 				logoPath: logoPath,
+				isAdmin: ref(false)
+			};
+		},
+		setup() {
+			const { serverIP } = getIp();
+			return {
+				serverIP,
 			};
 		},
 		methods: {
@@ -41,7 +51,25 @@
 				window.location.reload();
 				router.push('/');
 			},
+			
   		},
+		async mounted() {
+			try
+				{	
+					console.log("checkAdmin");
+					const token = localStorage.getItem('authToken');
+					const response = await axios.get(this.serverIP + "/api/user/getUser/isAdmin", {
+						headers: {
+							"Authorization": `Bearer ${token}`,
+						},
+					}
+					).then((response) => {
+						this.isAdmin = response.data ;
+					});
+				} catch (error) {
+					console.log(error);
+				}
+		}
 	};
 
 	

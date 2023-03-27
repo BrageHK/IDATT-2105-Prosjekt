@@ -48,7 +48,7 @@
       async changePassword() {
         try {
           const token = localStorage.getItem('authToken');
-          const response = await axios.post(
+          const response = await axios.put(
             this.serverIP + '/api/user/editUser/password',
             {
               oldPassword: this.oldPassword,
@@ -60,7 +60,9 @@
               },
             },
           );
-          alert(response.data);
+          localStorage.removeItem('authToken');
+          localStorage.setItem('authToken', response.data);
+          this.$router.push('/');
         } catch (error) {
           console.log(error);
         }

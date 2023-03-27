@@ -1,6 +1,6 @@
 <template>
 	<div class="signup-container">
-		<h2>{{ $t('createAccount') }}</h2>
+		<h2>{{ $t('createAdmin') }}</h2>
 		<form @submit.prevent="handleSubmit">
 			<div class="form-group">
 				<label for="name">{{ $t('firstName') }}:</label>
@@ -26,6 +26,10 @@
 				<label for="phoneNumber">{{ $t('phone') }}:</label>
 				<input type="number" id="phoneNumber" v-model="phoneNumber" required />
 			</div>
+            <div class="form-group">
+                <label for="isAdmin">{{ $t('admin') }}:</label>
+                <input type="checkbox" id="isAdmin" v-model="isAdmin" />
+            </div>
 			<button type="submit">{{ $t('create') }}</button>
 	  </form>
 	</div>
@@ -44,6 +48,7 @@
 				password: '',
 				address: '',
 				phoneNumber : '',
+                isAdmin: false,
 			};
 		},
 		setup() {
@@ -54,6 +59,7 @@
 		},
 		methods: {
 			handleSubmit() {
+                const token = localStorage.getItem('authToken');
 				const phoneNumberAsLong = parseInt(this.phoneNumber, 10);
 				axios 
 				.post( this.serverIP + '/api/auth/register', {
@@ -61,12 +67,17 @@
 						lastname: this.lastName,
 						email: this.email,
 						password: this.password,
+                        role: this.isAdmin ? "ADMIN" : "USER",
 						address: this.address,
-						role: "USER",
 						phonenumber: phoneNumberAsLong,
-					})
+					},
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
 				.then(({ data }) => {
-					localStorage.setItem('authToken', data.token);
+				
 					window.location.reload();
 				})
 				.catch((error) => {

@@ -39,8 +39,8 @@
 					<label for="category">{{ $t('category') }}:</label>
 					<select v-model="listingData.category" required >
         			<option disabled value="">{{ $t('selectCategory') }}</option>
-        			<option v-for="category in categories" :key="category" :value="category">
-		  			{{ $t(category) }}
+        			<option v-for="category in categories" :key="category.id" :value="category.id">
+		  			{{ $t(category.name) }}
 					</option>		
 					</select>
 				</div>
@@ -64,9 +64,14 @@
 
 <script lang="ts">
 	import axios from 'axios';
-	import { getIp, getCategories } from '@/globalState';
+	import { getIp } from '@/globalState';
 	import router from '@/router';
-import { remove } from '@vue/shared';
+import { ref } from 'vue';
+
+	interface category {
+		id: number;
+		name: string;
+	}
 
 	export default {
 		name: 'EditListingView',
@@ -88,21 +93,45 @@ import { remove } from '@vue/shared';
             existingImages: [] as string[],
             imagesToAdd: [] as string[],
             imagesToRemove: [] as string[],
+			categories: [] as category[],
+			isAdmin: ref(false),
 		};
 	},
+	async mounted() {
+		this.checkAdmin();
+		this.fetchListingData();
+			try {
+				const response = await axios.get(this.serverIP + '/api/category/getAllCategories');
+				this.categories = response.data;
+			} catch (error) {
+				console.error('Error fetching categories:', error);
+			}
+		},
 	setup() {
 		const { serverIP } = getIp();
-		const { categories } = getCategories();
 
 		return {
 			serverIP,
-			categories,
 		};
 	},
-	mounted() {
-		this.fetchListingData();
-	},
 	methods: {
+		async checkAdmin(){
+            try
+				{	
+					console.log("checkAdmin");
+					const token = localStorage.getItem('authToken');
+					const response = await axios.get(this.serverIP + "/api/user/getUser/isAdmin", {
+						headers: {
+							"Authorization": `Bearer ${token}`,
+						},
+					}
+					).then((response) => {
+						this.isAdmin = response.data ;
+					});
+				} catch (error) {
+					console.log(error);
+				}
+        },
 		async fetchListingData() {
 			try {
 				const token = localStorage.getItem('authToken');
@@ -111,7 +140,7 @@ import { remove } from '@vue/shared';
 						'Authorization': `Bearer ${token}`,
 					},
 				});
-                if (!response.data.isCurrentUserOwner) {
+                if (!response.data.isCurrentUserOwner && !this.isAdmin) {
                     console.log(response.data.isOwner + ' is not the owner');
                     alert('You are not the owner of this listing!')
                     router.push('/listing/' + this.id);
@@ -123,6 +152,11 @@ import { remove } from '@vue/shared';
 			}
 		},
         deleteImage(index: number, type: 'existing' | 'new') {
+			if ((type === 'existing' && this.existingImages.length <= 1 && this.imagePreviews.length === 0) || 
+        		(type === 'new' && this.imagePreviews.length <= 1 && this.existingImages.length === 0)) {
+        		alert("You cannot delete the last image.");
+        		return;
+    		}
             if (type === 'existing') {
                 this.imagesToRemove.push(this.existingImages[index]);
                 this.existingImages.splice(index, 1);

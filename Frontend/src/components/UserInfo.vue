@@ -83,6 +83,9 @@ export default {
 					},
 				});
 				alert(response.data);
+				localStorage.removeItem('authToken');
+          		localStorage.setItem('authToken', response.data);
+          		this.$router.push('/');
 			} catch (error) {
 				console.log(error);
 			}
