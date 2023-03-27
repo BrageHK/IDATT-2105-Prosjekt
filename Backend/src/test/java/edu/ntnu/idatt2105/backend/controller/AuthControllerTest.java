@@ -14,12 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AuthController.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class AuthControllerTest {
 
     @Autowired
@@ -51,14 +53,6 @@ public class AuthControllerTest {
     private AuthenticationRequest authenticationRequest;
     private RegisterRequest registerRequest;
     private AuthenticationResponse authenticationResponse;
-
-    @BeforeEach
-    public void setUp() {
-        authenticationRequest = new AuthenticationRequest("user@example.com", "password123");
-        registerRequest = new RegisterRequest("John", "Doe", "exampl@gmail.com",
-                "123456", "address", 12345678L, Role.USER);
-        authenticationResponse = new AuthenticationResponse("jwt_token");
-    }
 
     @Test
     void register() throws Exception {

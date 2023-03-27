@@ -17,6 +17,12 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Service for handling file uploads. The service will store the files in the directory src/main/resources/images.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
 @Service
 @RequiredArgsConstructor
 public class FileStorageService {
@@ -24,6 +30,9 @@ public class FileStorageService {
     private final Path fileStorageLocation;
     Logger logger = org.slf4j.LoggerFactory.getLogger(FileStorageService.class);
 
+    /**
+     * Constructor for the FileStorageService. The file storage location is set to src/main/resources/images.
+     */
     public FileStorageService() {
         this.fileStorageLocation = Paths.get("src/main/resources/images").toAbsolutePath().normalize();
         try {
@@ -33,6 +42,16 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Store a file on the server. The file will be stored in a directory with the name of the listingID. The file
+     * must have the correct extension and name. A file with the same name will be overwritten and might break the
+     * listing. The filename has to be the same as the total number of files in the directory.
+     *
+     * @param file The file to store
+     * @param id The id of the listing
+     * @param filename The name of the file
+     * @return The filename without the extension
+     */
     public String handleFileUpload(MultipartFile file, String id, String filename) {
         String originalFileName = file.getOriginalFilename();
         String extension = "";
@@ -65,15 +84,13 @@ public class FileStorageService {
         }
     }
 
-    public File getFile(String fileName) {
-        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-        File file = filePath.toFile();
-        if (!file.exists()) {
-            throw new RuntimeException("File not found: " + fileName);
-        }
-        return file;
-    }
-
+    /**
+     * Get a single image from a listing. The image is returned as a byte array.
+     *
+     * @param listingId The id of the listing.
+     * @param imageIndex The index of the image in the listing.
+     * @return A ResponseEntity containing the image as a byte array.
+     */
     public ResponseEntity<byte[]> getImageInListing(String listingId, String imageIndex) {
         Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
         File file = filePath.toFile();
@@ -91,6 +108,13 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Deletes a folder and all its contents.
+     *
+     * @param folderName The name of the folder to delete.
+     * @return True if the folder was deleted, false otherwise.
+     * @throws IOException If the folder could not be deleted.
+     */
     public boolean deleteFolder(String folderName) throws IOException {
         Path folderPath = this.fileStorageLocation.resolve(folderName).normalize();
         File folder = folderPath.toFile();
@@ -101,6 +125,14 @@ public class FileStorageService {
         return true;
     }
 
+    /**
+     * Deletes a file from a directory. If the directory only contains one file, this method will throw an exception.
+     * This is to prevent a listing from having no images.
+     *
+     * @param listingId The id of the listing that the file belongs to.
+     * @param imageIndex The index of the image in the listing.
+     * @return True if the file was deleted, false otherwise.
+     */
     public boolean deleteFile(String listingId, String imageIndex) {
         Path filePath = this.fileStorageLocation.resolve(listingId + "/" + imageIndex).normalize();
         File file = filePath.toFile();

@@ -5,7 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
-@Controller
+/**
+ * Controller for handling WebSocket messages. This feature is not implemented in the current version.
+ *
+ * @author Brage H. Kvamme
+ * @version 1.0
+ */
+//@Controller
 public class WebSocketController {
 /*
     @Autowired

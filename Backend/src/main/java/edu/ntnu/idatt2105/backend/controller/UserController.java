@@ -57,6 +57,19 @@ public class UserController {
     }
 
     /**
+     * Get seller with the given id. Only returns phone, email and name.
+     *
+     * @param id id of the user to get.
+     * @return User info as JSON string.
+     * @throws JsonProcessingException if the user cannot be converted to JSON.
+     */
+    @Operation(summary = "Get seller with the given id", description = "Only returns phone, email and name")
+    @GetMapping("/getSeller/{id}")
+    public ResponseEntity<String> getSellerById(@PathVariable Long id) throws JsonProcessingException {
+        return userService.getSellerById(id);
+    }
+
+    /**
      * Get the favorite listings of the logged-in user.
      *
      * @return List of favorite listings as JSON string.
