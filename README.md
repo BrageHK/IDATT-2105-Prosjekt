@@ -106,7 +106,6 @@ npm run test:e2e:dev
 
 ## Further development <a name="Further_development"></a>
 
-
 As we were only 2 students working on this project, many more features could have been implemented and improved upon. Here are some of the features that could be implemented in the future:
 
 ### Refresh tokens
@@ -122,6 +121,10 @@ In the frontend ......
 ### Proper messaging system
 
 There was not enough time to implement a proper messaging system. The backend has the database structure for messages and conversations between seller and buyer, but service classes and a controller class is necessary. Right now a buyer can get the contact information of a seller and contact them on either email or phone. When creating a messaging system, using websockets is recommended.
+
+### Improved CI/CD
+
+We have a .gitlab-ci.yml file for making sure the frontend is building correct, and that the test run. Because we didn't have enough time, no useful tests were added. If proper testing was added, we could be sure that the entire project works every time we wanted to push to GitLab. 
 
 ## Documentation
 
