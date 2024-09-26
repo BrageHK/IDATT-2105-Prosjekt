@@ -73,8 +73,6 @@ mvn spring-boot:run
 
 ### Frontend setup
 
-Eilert du skriver denne
-
 ```sh
 npm install
 ```
